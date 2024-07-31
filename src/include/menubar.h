@@ -1,0 +1,94 @@
+#ifndef MENUBAR_H
+#define MENUBAR_H
+
+#include <QMenu>
+#include <QMenuBar>
+#include <QAction>
+#include <QIcon>
+
+class FileMenu : public QMenu {
+    Q_OBJECT
+public:
+    FileMenu();
+
+private:
+    QAction *open;
+    QAction *closeAll;
+    QAction *save;
+    QAction *saveAs;
+    QAction *preferences;
+    QAction *exit;
+
+signals:
+    void openFile();
+
+private slots:
+    void sendOpenFile();
+};
+
+class ViewMenu : public QMenu {
+    Q_OBJECT
+public:
+    ViewMenu();
+
+private:
+    QAction *toolBar;
+    QAction *statusBar;
+    QAction *spectraList;
+};
+
+class AcquisitionMenu : public QMenu {
+    Q_OBJECT
+public:
+    AcquisitionMenu();
+
+private:
+    QAction *acquisitionSetup;
+    QAction *changeStartStop;
+    QAction *repeatMesureTest;
+    QAction *deleteDataResetTime;
+    QAction *disconnect;
+};
+
+class DisplayMenu : public QMenu {
+    Q_OBJECT
+public:
+    DisplayMenu();
+
+private:
+    QAction *scale;
+    QAction *calibration;
+};
+
+class DPPMenu : public QMenu {
+    Q_OBJECT
+public:
+    DPPMenu();
+
+private:
+    QAction *openStartDialog;
+};
+
+class AnalyzeMenu : public QMenu {
+    Q_OBJECT
+public:
+    AnalyzeMenu();
+
+private:
+    QAction *calibrate;
+    QAction *peakSearch;
+    QAction *defineROI;
+
+};
+
+class HelpMenu : public QMenu {
+    Q_OBJECT
+public:
+    HelpMenu();
+
+private:
+    QAction *help;
+};
+
+
+#endif

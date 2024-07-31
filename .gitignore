@@ -68,3 +68,5 @@ compile_commands.json
 .qt
 .vscode
 build
+*.exe
+*_autogen/
