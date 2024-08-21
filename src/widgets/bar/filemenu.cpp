@@ -24,6 +24,7 @@ FileMenu::FileMenu(){
 
     this->saveAs->setShortcut(Qt::CTRL | Qt::Key_S);
     this->saveAs->setIcon(QIcon(":/icons/save.png"));
+    QObject::connect(this->save, SIGNAL(triggered()), this, SIGNAL(saveFile()));
 }
 
 /* 

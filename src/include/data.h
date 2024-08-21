@@ -4,12 +4,16 @@
 #include <QStringList>
 #include <QString>
 #include <QDateTime>
+#include <QFileDialog>
 #include <vector>
 
 class MCAData {
 public:
-    MCAData(QStringList dataList);
+    MCAData(QStringList dataList, QString fileType);
     std::vector<int> getData();
+    QStringList getHeaderData();
+    void saveAsCSV(QString fileName);
+    void saveAsTXT(QString fileName);
 
 private:
     QStringList dataList;
@@ -18,7 +22,7 @@ private:
     double realTime = 0;
     double deadTime;
     QDateTime startTime;
-    void parseData();
+    void parseData(QString parser);
 };
 
 #endif

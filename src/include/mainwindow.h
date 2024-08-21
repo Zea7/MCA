@@ -34,6 +34,7 @@
 #include "toolbar.h"
 #include "data.h"
 #include "utils.h"
+#include "spectochart.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -59,14 +60,15 @@ private:
 
     void setSignalFromMenuBar();
 
+    void setSidePannel(QStringList list);
+
     QWidget *mainWidget;
     QGridLayout *mainLayout;
 
     QHBoxLayout *bottomRemoteControl;
     QVBoxLayout *sidePannel;
 
-    QChart *mainChart;
-    QBarSeries *mainSeries;
+    SpectoChart *mainChart;
     QChartView *mainChartView;
     QValueAxis *axisX;
     QValueAxis *axisY;
@@ -75,6 +77,13 @@ private:
     int endSample = 2048;
     int maxMagnitude = 1;
     int threshold = 0;
+
+
+    /* 
+        for test
+    */
+    int openTime = 0;
+
 
     FileMenu *fileMenu;
     ViewMenu *viewMenu;
@@ -88,10 +97,17 @@ private:
 
     MCAData *data;
 
-private slots:
-    void openMCAFile();
+signals:
+    void setSampleRange(int start, int end);
+    void setMaxMagnitude(int magnitude);
     void resizeXAxis();
     void resizeYAxis();
+
+private slots:
+    void openMCAFile();
+    void saveMCAFile();
+    void autoResizeXAxis();
+    void autoResizeYAxis();
 };
 
 #endif

@@ -34,8 +34,8 @@ void MainWindow::setUI(){
     setSignalFromMenuBar();
 
     this->mainLayout->addWidget(this->mainChartView, 0, 0, 7, 7);
-    this->mainLayout->addLayout(this->bottomRemoteControl, 0, 7, 7, 2);
-    this->mainLayout->addLayout(this->sidePannel, 7, 0, 2, 9);
+    this->mainLayout->addLayout(this->sidePannel, 0, 7, 7, 2);
+    this->mainLayout->addLayout(this->bottomRemoteControl, 7, 0, 2, 9);
 }
 
 void MainWindow::setMCAMenuBar(){
@@ -55,39 +55,32 @@ void MainWindow::setMCAMenuBar(){
 }
 
 void MainWindow::setChartView(){
-    this->mainChart = new QChart();
+    this->mainChart = new SpectoChart();
     this->mainChartView = new QChartView(this->mainChart);
-    this->mainSeries = new QBarSeries();
-
-    this->mainChart->addSeries(this->mainSeries);
-
-    this->axisX = new QValueAxis;
-    axisX->setRange(startSample, endSample);
-    axisX->setLabelFormat("%g");
-    axisX->setTitleText("Samples");
-
-    this->axisY = new QValueAxis;
-    axisY->setRange(0, maxMagnitude);
-    axisY->setTitleText("Level");
-
-    this->mainChart->addAxis(axisX, Qt::AlignBottom);
-    this->mainSeries->attachAxis(axisX);
-    this->mainChart->addAxis(axisY, Qt::AlignLeft);
-    this->mainSeries->attachAxis(axisY);
-    this->mainChart->legend()->hide();
-
-    this->mainChartView->setRenderHint(QPainter::Antialiasing);
-    this->mainSeries->setBarWidth(1.0);
-
+    QObject::connect(this, SIGNAL(setSampleRange(int, int)), this->mainChart, SLOT(changeSampleRange(int, int)));
+    QObject::connect(this, SIGNAL(setMaxMagnitude(int)), this->mainChart, SLOT(changeMaxMagnitude(int)));
+    
+    QObject::connect(this, SIGNAL(resizeXAxis()), this->mainChart, SLOT(resizeXAxis()));
+    QObject::connect(this, SIGNAL(resizeYAxis()), this->mainChart, SLOT(resizeYAxis()));
 }
 
 void MainWindow::setSignalFromMenuBar(){
     QObject::connect(this->fileMenu, SIGNAL(openFile()), this, SLOT(openMCAFile()));
-    QObject::connect(this->toolbar, SIGNAL(openFile()), this, SLOT(openMCAFile()));
+    QObject::connect(this->toolbar, SIGNAL(openFile()), this, SLOT(openMCAFile())); 
 
-    QObject::connect(this->toolbar, SIGNAL(resizeXAxis()), this, SLOT(resizeXAxis()));
-    QObject::connect(this->toolbar, SIGNAL(resizeYAxis()), this, SLOT(resizeYAxis()));
+    QObject::connect(this->fileMenu, SIGNAL(saveFile()), this, SLOT(saveMCAFile()));
+    QObject::connect(this->toolbar, SIGNAL(saveFile()), this, SLOT(saveMCAFile()));
 
+    QObject::connect(this->toolbar, SIGNAL(resizeXAxis()), this, SLOT(autoResizeXAxis()));
+    QObject::connect(this->toolbar, SIGNAL(resizeYAxis()), this, SLOT(autoResizeYAxis()));
+
+}
+
+void MainWindow::setSidePannel(QStringList list){
+    clearLayout(this->sidePannel);
+    for(auto &i : list){
+        this->sidePannel->addWidget(new QLabel(i));
+    }
 }
 
 /* 
@@ -112,6 +105,7 @@ void MainWindow::openMCAFile(){
         else{
             qDebug() << "File Open Error!\n Unknown Error occured.";
         }
+        return ;
     }
 
     QTextStream openFile(&dataFile);
@@ -123,48 +117,48 @@ void MainWindow::openMCAFile(){
         // qDebug() << data;
     }
 
-    this->data = new MCAData(dataList);
+    this->data = new MCAData(dataList, fileName.split(".")[1]);
 
     dataFile.close();
 
     std::vector<int> spectrumData = this->data->getData();
-    QBarSet *testSet = new QBarSet("MCA Data");
-    testSet->setColor(Qt::blue);
-    testSet->setBorderColor(Qt::transparent);
-    for(auto i : spectrumData){
-        *testSet << i;
-    }
+
     this->endSample = spectrumData.size();
     this->maxMagnitude = *std::max_element(spectrumData.begin(), spectrumData.end()); 
-    this->mainSeries->append(testSet);
+    this->mainChart->addData(spectrumData);
+    
+    emit setSampleRange(startSample, endSample);
+    emit setMaxMagnitude(maxMagnitude);
+    QStringList list = this->data->getHeaderData();
+    setSidePannel(list);
 
-    resizeXAxis();
-    resizeYAxis();
+    autoResizeXAxis();
+    autoResizeYAxis();
 }
 
-void MainWindow::resizeXAxis() {
+void MainWindow::saveMCAFile(){
+    QString filter =  "CSV File (*.csv) ;; Text File (*.txt) ;; MCA File (*.mca) ;; All Files (*.*)";
+    QString defaultFilter = "CSV File (*.csv)";
+    QString fileName = QFileDialog::getSaveFileName(this, "Save File", QDir::currentPath(), filter, &defaultFilter);
+
+    qDebug() << fileName;
+
+    if(fileName.split(".")[1] == "csv") this->data->saveAsCSV(fileName);
+    else if(fileName.split(".")[1] == "txt") this->data->saveAsTXT(fileName);
+}
+
+void MainWindow::autoResizeXAxis() {
     bool start = false;
     std::vector<int> data = this->data->getData();
-    for(int i = 0; i<data.size();i++){
-        if(data[i] >= this->threshold) {
-            if(start){
-                endSample = i;
-            }
-            else {
-                start = true;
-                startSample = i;
-            }
-            
-        }
-    }
+    std::pair<int, int> border = getBorderByThreshold(data, this->threshold);
+    this->startSample = border.first; this->endSample = border.second;
 
-    this->axisX->setRange(startSample, endSample);
-    this->axisX->setLabelFormat("%g");
-    this->axisX->setTitleText("Samples");
+    emit setSampleRange(startSample, endSample);
+    emit resizeXAxis();
 }
 
 
-void MainWindow::resizeYAxis() {
-    this->axisY->setRange(0, getClosestInt(this->maxMagnitude));
-    this->axisY->setTitleText("Level");
+void MainWindow::autoResizeYAxis() {
+    emit setMaxMagnitude(maxMagnitude);
+    emit resizeYAxis();
 }

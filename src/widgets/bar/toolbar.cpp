@@ -15,6 +15,7 @@ ToolBar::ToolBar(){
     this->addAction(this->resizeVertical);
 
     QObject::connect(this->open, SIGNAL(triggered()), this, SIGNAL(openFile()));
+    QObject::connect(this->save, SIGNAL(triggered()), this, SIGNAL(saveFile()));
     QObject::connect(this->resizeHorizontal, SIGNAL(triggered()), this, SIGNAL(resizeXAxis()));
     QObject::connect(this->resizeVertical, SIGNAL(triggered()), this, SIGNAL(resizeYAxis()));
 }

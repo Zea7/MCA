@@ -21,6 +21,7 @@ private:
 
 signals:
     void openFile();
+    void saveFile();
 
 private slots:
     void sendOpenFile();

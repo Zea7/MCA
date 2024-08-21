@@ -19,6 +19,7 @@ private:
 
 signals:
     void openFile();
+    void saveFile();
     void resizeXAxis();
     void resizeYAxis();
 };
