@@ -1,7 +1,7 @@
 #include "data.h"
 
 MCAData::MCAData(QStringList dataList, QString fileType) : dataList(dataList) {
-    if(fileType == "txt") parseData("-");
+    if(fileType == "txt" || fileType == "mca") parseData("-");
     else if(fileType == "csv") parseData(",");
 }
 
@@ -48,8 +48,7 @@ void MCAData::parseData(QString parser){
 
             }
         }
-        else if(i == "<<MCA DATA>>") isSpectrum = true;
-        
+        else if(i.contains("DATA")) isSpectrum = true;        
 
         if(isSpectrum) {
             QString input = i;

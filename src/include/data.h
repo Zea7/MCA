@@ -25,4 +25,6 @@ private:
     void parseData(QString parser);
 };
 
+
+
 #endif

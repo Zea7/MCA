@@ -70,3 +70,9 @@ compile_commands.json
 build
 *.exe
 *_autogen/
+
+*.mca
+*.csv
+*.txt
+
+TODO

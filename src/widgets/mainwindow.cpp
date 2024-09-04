@@ -10,13 +10,21 @@ void MainWindow::setUI(){
     this->mainWidget = new QWidget();
     this->mainLayout = new QGridLayout();
 
-    this->bottomRemoteControl = new QHBoxLayout();
+    this->bottomRemoteControl = new QGridLayout();
     this->sidePannel = new QVBoxLayout();
 
-    QLabel *temp1 = new QLabel("bottom");
+    QLabel *channel = new QLabel("Channel : ");
+    QLabel *level = new QLabel("Level : ");
     QLabel *temp2 = new QLabel("side");
 
-    this->bottomRemoteControl->addWidget(temp1);
+    this->xData = new QLabel("");
+    this->yData = new QLabel("");
+
+
+    this->bottomRemoteControl->addWidget(channel, 0, 0, 1, 1);
+    this->bottomRemoteControl->addWidget(xData, 0, 1, 1,1);
+    this->bottomRemoteControl->addWidget(level, 1, 0, 1,1);
+    this->bottomRemoteControl->addWidget(yData, 1, 1, 1, 1);
     this->sidePannel->addWidget(temp2);
 
 
@@ -62,6 +70,10 @@ void MainWindow::setChartView(){
     
     QObject::connect(this, SIGNAL(resizeXAxis()), this->mainChart, SLOT(resizeXAxis()));
     QObject::connect(this, SIGNAL(resizeYAxis()), this->mainChart, SLOT(resizeYAxis()));
+
+    QObject::connect(this->mainChart, SIGNAL(GetHoveredData(bool, int, int)), this, SLOT(ShowHoveredData(bool, int, int)));
+
+    QObject::connect(this, SIGNAL(setROIRegion(std::vector<std::pair<int, int>>)), this->mainChart, SLOT(ROIRegionChange(std::vector<std::pair<int, int>>)));
 }
 
 void MainWindow::setSignalFromMenuBar(){
@@ -73,6 +85,14 @@ void MainWindow::setSignalFromMenuBar(){
 
     QObject::connect(this->toolbar, SIGNAL(resizeXAxis()), this, SLOT(autoResizeXAxis()));
     QObject::connect(this->toolbar, SIGNAL(resizeYAxis()), this, SLOT(autoResizeYAxis()));
+
+    QObject::connect(this->analyzeMenu, SIGNAL(openROIDialog()), this, SLOT(openROIDialog()));
+    QObject::connect(this->toolbar, SIGNAL(openROIDialog()), this, SLOT(openROIDialog()));
+    QObject::connect(this->analyzeMenu, SIGNAL(openAutoPeakDialog()), this, SLOT(openAutoPeakDialog()));
+
+    QObject::connect(this->toolbar, SIGNAL(showSpecificRegion()), this, SLOT(showSpecificRegion()));
+
+
 
 }
 
@@ -161,4 +181,83 @@ void MainWindow::autoResizeXAxis() {
 void MainWindow::autoResizeYAxis() {
     emit setMaxMagnitude(maxMagnitude);
     emit resizeYAxis();
+}
+
+
+
+
+
+
+
+void MainWindow::openROIDialog(){
+    DefineROIDialog *dialog = new DefineROIDialog(roiRegions);
+    QObject::connect(dialog, SIGNAL(sendROIRegions(std::vector<std::pair<int, int>>)), this, SLOT(getROIRegions(std::vector<std::pair<int, int>>)));
+    QObject::connect(dialog, SIGNAL(sendROIRegions(std::vector<std::pair<int, int>>)), this->mainChart, SLOT(ROIRegionChange(std::vector<std::pair<int, int>>)));
+    QObject::connect(dialog, SIGNAL(sendShowRegion(int, int)), this, SLOT(sendSpecificRegion(int, int)));
+    dialog->show();
+}
+
+void MainWindow::getROIRegions(std::vector<std::pair<int, int>> roiRegions){
+    this->roiRegions = roiRegions;
+    qDebug() << roiRegions;
+}
+
+void MainWindow::showSpecificRegion(){
+    DefineROIDialog *dialog = new DefineROIDialog(roiRegions);
+    QObject::connect(dialog, SIGNAL(sendROIRegions(std::vector<std::pair<int, int>>)), this, SLOT(getROIRegions(std::vector<std::pair<int, int>>)));
+    QObject::connect(dialog, SIGNAL(sendROIRegions(std::vector<std::pair<int, int>>)), this->mainChart, SLOT(ROIRegionChange(std::vector<std::pair<int, int>>)));
+    QObject::connect(dialog, SIGNAL(sendShowRegion(int, int)), this, SLOT(sendSpecificRegion(int, int)));
+    dialog->show();
+}
+
+void MainWindow::sendSpecificRegion(int start, int end){
+    emit setSampleRange(start, end);
+    emit resizeXAxis();
+}
+
+void MainWindow::ShowHoveredData(bool status, int index, int value){
+    // qDebug() << index;
+    // qDebug() << value;
+    this->xData->setText(QString::number(index));
+    this->yData->setText(QString::number(value));
+}
+
+void MainWindow::openAutoPeakDialog(){
+    AutoPeakDialog *dialog = new AutoPeakDialog(startSample, endSample);
+    QObject::connect(dialog, SIGNAL(doAutoPeakSearch(int, int, int, int)), this, SLOT(doAutoPeakSearch(int, int, int, int)));
+    dialog->show();
+}
+
+void MainWindow::doAutoPeakSearch(int start, int end, int left, int right){
+    std::vector<std::pair<int, int>> points;
+
+    for(int i=-1; i<=1; i++){
+        points.push_back({left+i, data->getData()[left+i]});
+        points.push_back({right+i, data->getData()[right+i]});
+    }
+
+    std::pair<double, double> linearFunc = linearFitMethodWithLSM<int>(points);
+
+    std::vector<double> dataset;
+    double areaSum = 0;
+    for(int i=start;i<end;i++){
+        double dataPoint = (double)data->getData()[i] - (linearFunc.first * i + linearFunc.second);
+        areaSum += dataPoint;
+    }
+    for(int i=start;i<end;i++){
+        double dataPoint = (double)data->getData()[i] - (linearFunc.first * i + linearFunc.second);
+        dataset.push_back(dataPoint/areaSum * 1000);
+    }
+
+    std::pair<double, double> gaussian = fitGaussianDistribution(dataset);
+
+    double FHWM = 2.3548200 * gaussian.second;
+
+    this->roiRegions.push_back({start, end});
+    setROIRegion(this->roiRegions);
+
+    qDebug() << gaussian.first;
+    qDebug() << gaussian.second;
+    qDebug() << FHWM;
+
 }

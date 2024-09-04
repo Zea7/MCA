@@ -17,11 +17,16 @@ private:
     QAction *resizeHorizontal;
     QAction *resizeVertical;
 
+    QAction *roiDialog;
+    QAction *magnification;
+
 signals:
     void openFile();
     void saveFile();
     void resizeXAxis();
     void resizeYAxis();
+    void openROIDialog();
+    void showSpecificRegion();
 };
 
 #endif

@@ -23,6 +23,8 @@ SpectoChart::SpectoChart(){
     this->legend()->hide();
 
     this->mainSeries->setBarWidth(1.0);
+
+    QObject::connect(this->mainSeries, SIGNAL(hovered(bool, int, QBarSet*)), this, SLOT(MouseHovered(bool, int, QBarSet*)));
 }
 
 void SpectoChart::addData(std::vector<int>& set){
@@ -64,14 +66,64 @@ void SpectoChart::addData(std::vector<int>& set){
 
     newSet->setColor(colorVector[setCounter]);
     newSet->setBorderColor(Qt::transparent);
+    newSet->setSelectedColor(this->selectedColor);
+    for(auto i:ROIRegions){
+        QList<int> idx;
+        for(int j=i.first;j<=i.second;j++){
+            idx << j;
+        }
+        newSet->toggleSelection(idx);
+    }
     this->mainSeries->append(newSet);
     this->setCounter++;
+    
 }
 
 void SpectoChart::mousePressEvent(QGraphicsSceneMouseEvent *event){
     
 }
 
+void SpectoChart::selectROIRegion(int start, int end){
+    if(std::find(ROIRegions.begin(), ROIRegions.end(), std::make_pair(start, end)) == ROIRegions.end()){
+        ROIRegions.push_back({start, end});
+    } else {
+        qDebug() << "ROI Region is already selected!";
+    }
+    QList<QBarSet *> sets = this->mainSeries->barSets();
+    QList<int> idx;
+
+
+    for(auto *i : sets){
+        idx.clear();
+        QList<int> selected = i->selectedBars();
+        for(int i=start; i<=end;i++){
+            if(!selected.contains(i)) idx<<i;
+        }
+        i->toggleSelection(idx);
+    }
+
+}
+
+void SpectoChart::deselectROIRegion(int start, int end){
+    auto iter = std::find(ROIRegions.begin(), ROIRegions.end(), std::make_pair(start, end));
+    if(iter == ROIRegions.end()) {
+        qDebug() << "ROI Regions have same range do not exist.";
+    }
+    else{
+        ROIRegions.erase(iter);
+    }
+    QList<QBarSet *> sets = this->mainSeries->barSets();
+    QList<int> idx;
+
+    for(auto *i : sets){
+        idx.clear();
+        QList<int> selected = i->selectedBars();
+        for(int i=start; i<=end;i++){
+            if(selected.contains(i)) idx<<i;
+        }
+        i->toggleSelection(idx);
+    }
+}
 /* 
     public slots
 
@@ -79,8 +131,10 @@ void SpectoChart::mousePressEvent(QGraphicsSceneMouseEvent *event){
     To use in other class, these functions have to be public.
 
     changeSampleRange(int start, int end)   :   change X Axis range to [start, end]
+    changeMaxMagnitude(int magnitude)       :   change Max Magnitude to change Y Axis range to [0, maxMagnitude]
     resizeXAxis()   :   resize X Axis range of chart
     resizeYAxis()   :   resize Y Axis range of chart
+    selectROIRegion()   :   make barsets selected from [start, end]
 
 */
 
@@ -97,7 +151,6 @@ void SpectoChart::changeMaxMagnitude(int magnitude){
 
 void SpectoChart::resizeXAxis(){
     this->axisX->setRange(startSample, endSample);
-    this->axisX->setLabelFormat("%g");
     this->axisX->setTitleText("Samples");
 }
 
@@ -106,7 +159,19 @@ void SpectoChart::resizeYAxis(){
     this->axisY->setTitleText("Level");
 }
 
+void SpectoChart::ROIRegionChange(std::vector<std::pair<int, int>> regions){
+    for(auto i:regions){
+        if(std::find(ROIRegions.begin(), ROIRegions.end(), i) == ROIRegions.end()) selectROIRegion(i.first, i.second);
+    }
+    for(auto i:this->ROIRegions){
+        if(std::find(regions.begin(), regions.end(), i) == regions.end()) deselectROIRegion(i.first, i.second);
+    }
+}
+
 /*
     private slots
 
 */
+void SpectoChart::MouseHovered(bool status, int index, QBarSet *barset){
+    emit GetHoveredData(status, index, int(barset->at(index)));
+}

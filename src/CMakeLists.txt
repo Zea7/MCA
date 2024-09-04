@@ -6,6 +6,7 @@ file(GLOB SOURCES
         widgets/*.cpp 
         utils/*.cpp 
         widgets/bar/*.cpp
+        widgets/dialogs/*.cpp
         main.cpp
 )
 file(GLOB HEADERS include/*.h)

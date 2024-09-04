@@ -6,6 +6,7 @@
 #include <QValueAxis>
 #include <QBarSet>
 #include <vector>
+#include <algorithm>
 
 #include "utils.h"
 
@@ -32,7 +33,9 @@ private:
     std::vector<int> maxLevels;
 
     int setCounter = 0;
-    std::vector<Qt::GlobalColor> colorVector = {Qt::blue, Qt::green, Qt::red, Qt::cyan};
+    std::vector<Qt::GlobalColor> colorVector = {Qt::blue, Qt::green, Qt::cyan, Qt::yellow, Qt::gray, Qt::black};
+    Qt::GlobalColor selectedColor = Qt::red;
+    std::vector<std::pair<int, int>> ROIRegions;
     int startSample = 0;
     int endSample = 1024;
     int maxMagnitude = 1;
@@ -40,11 +43,23 @@ private:
 
     bool doingROI = false;
 
+    void selectROIRegion(int start, int end);
+    void deselectROIRegion(int start, int end);
+
+signals:
+    void GetHoveredData(bool status, int index, int value);
+
 public slots:
     void changeSampleRange(int start, int end);
     void changeMaxMagnitude(int magnitude);
     void resizeXAxis();
     void resizeYAxis();
+
+    void ROIRegionChange(std::vector<std::pair<int, int>> regions);
+
+private slots:
+    // Interact with mouse event
+    void MouseHovered(bool status, int index, QBarSet *barset);
 };
 
 #endif

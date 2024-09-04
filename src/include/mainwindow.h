@@ -35,6 +35,7 @@
 #include "data.h"
 #include "utils.h"
 #include "spectochart.h"
+#include "dialogs.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -65,7 +66,10 @@ private:
     QWidget *mainWidget;
     QGridLayout *mainLayout;
 
-    QHBoxLayout *bottomRemoteControl;
+    QLabel *xData;
+    QLabel *yData;
+
+    QGridLayout *bottomRemoteControl;
     QVBoxLayout *sidePannel;
 
     SpectoChart *mainChart;
@@ -97,17 +101,39 @@ private:
 
     MCAData *data;
 
+    // ROI
+    std::vector<std::pair<int, int>> roiRegions;
+
+    // Peaks
+    std::vector<PeakInfo> peaks;
+
 signals:
     void setSampleRange(int start, int end);
     void setMaxMagnitude(int magnitude);
     void resizeXAxis();
     void resizeYAxis();
 
+    void setROIRegion(std::vector<std::pair<int, int>> roiRegions);
+
 private slots:
     void openMCAFile();
     void saveMCAFile();
     void autoResizeXAxis();
     void autoResizeYAxis();
+    
+    // ROI
+    void openROIDialog();
+    void getROIRegions(std::vector<std::pair<int, int>> roiRegions);
+
+    void showSpecificRegion();
+    void sendSpecificRegion(int start, int end);
+
+    // SpectoChart
+    void ShowHoveredData(bool status, int index, int value);
+
+    // Auto peak search
+    void openAutoPeakDialog();
+    void doAutoPeakSearch(int start, int end, int left, int right);
 };
 
 #endif

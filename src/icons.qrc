@@ -4,5 +4,7 @@
          <file>icons/save.png</file>
          <file>icons/resize-horizontal.png</file>
          <file>icons/resize-vertical.png</file>
+         <file>icons/region-select.png</file>
+         <file>icons/magnification.png</file>
     </qresource>
 </RCC>

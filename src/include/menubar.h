@@ -80,6 +80,9 @@ private:
     QAction *peakSearch;
     QAction *defineROI;
 
+signals:
+    void openROIDialog();
+    void openAutoPeakDialog();
 };
 
 class HelpMenu : public QMenu {

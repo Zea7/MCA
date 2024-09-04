@@ -1,4 +1,5 @@
 #include "menubar.h"
+#include "dialogs.h"
 
 AnalyzeMenu::AnalyzeMenu(){
     setTitle("Analyze");
@@ -12,4 +13,8 @@ AnalyzeMenu::AnalyzeMenu(){
     this->addAction(this->defineROI);
 
     this->calibrate->setShortcut(Qt::Key_F5);
+
+    QObject::connect(this->defineROI, SIGNAL(triggered()), this, SIGNAL(openROIDialog()));
+    QObject::connect(this->peakSearch, SIGNAL(triggered()), this, SIGNAL(openAutoPeakDialog()));
 }
+
