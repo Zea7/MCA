@@ -11,7 +11,7 @@ void MainWindow::setUI(){
     this->mainLayout = new QGridLayout();
 
     this->bottomRemoteControl = new QGridLayout();
-    this->sidePannel = new QVBoxLayout();
+    this->sidePannel = new QTabWidget();
 
     QLabel *channel = new QLabel("Channel : ");
     QLabel *level = new QLabel("Level : ");
@@ -25,8 +25,6 @@ void MainWindow::setUI(){
     this->bottomRemoteControl->addWidget(xData, 0, 1, 1,1);
     this->bottomRemoteControl->addWidget(level, 1, 0, 1,1);
     this->bottomRemoteControl->addWidget(yData, 1, 1, 1, 1);
-    this->sidePannel->addWidget(temp2);
-
 
 
     this->mainWidget->setLayout(mainLayout);
@@ -34,16 +32,17 @@ void MainWindow::setUI(){
 
     setWindowTitle("iMCA");
 
-
     setMCAMenuBar();
+
+    setSidePannel();
 
     setChartView();
 
     setSignalFromMenuBar();
 
     this->mainLayout->addWidget(this->mainChartView, 0, 0, 7, 7);
-    this->mainLayout->addLayout(this->sidePannel, 0, 7, 7, 2);
-    this->mainLayout->addLayout(this->bottomRemoteControl, 7, 0, 2, 9);
+    this->mainLayout->addWidget(this->sidePannel, 0, 7, 9, 2);
+    this->mainLayout->addLayout(this->bottomRemoteControl, 7, 0, 2, 7);
 }
 
 void MainWindow::setMCAMenuBar(){
@@ -55,7 +54,6 @@ void MainWindow::setMCAMenuBar(){
     menubar->addMenu(this->acquisitionMenu = new AcquisitionMenu());
     menubar->addMenu(this->displayMenu = new DisplayMenu());
     menubar->addMenu(this->analyzeMenu = new AnalyzeMenu());
-    menubar->addMenu(this->dppMenu = new DPPMenu());
     menubar->addMenu(this->helpMenu = new HelpMenu());
     
     this->setMenuBar(menubar);
@@ -96,11 +94,22 @@ void MainWindow::setSignalFromMenuBar(){
 
 }
 
-void MainWindow::setSidePannel(QStringList list){
-    clearLayout(this->sidePannel);
+void MainWindow::setSidePannel(){
+    this->infoTab = new QWidget();
+    this->roiTab = new ROITab();
+    this->sidePannel->addTab(this->infoTab, "Info");
+    this->sidePannel->addTab(this->roiTab, "ROI");
+
+    QObject::connect(this, SIGNAL(setROIRegion(std::vector<std::pair<int, int>>)), this->roiTab, SLOT(getROIRegions(std::vector<std::pair<int ,int>>)));
+}
+
+void MainWindow::setInfoTab(QStringList list){
+    QVBoxLayout *newLayout = new QVBoxLayout();
     for(auto &i : list){
-        this->sidePannel->addWidget(new QLabel(i));
+        newLayout->addWidget(new QLabel(i));
     }
+
+    infoTab->setLayout(newLayout);
 }
 
 /* 
@@ -150,7 +159,7 @@ void MainWindow::openMCAFile(){
     emit setSampleRange(startSample, endSample);
     emit setMaxMagnitude(maxMagnitude);
     QStringList list = this->data->getHeaderData();
-    setSidePannel(list);
+    setInfoTab(list);
 
     autoResizeXAxis();
     autoResizeYAxis();
@@ -192,6 +201,7 @@ void MainWindow::autoResizeYAxis() {
 void MainWindow::openROIDialog(){
     DefineROIDialog *dialog = new DefineROIDialog(roiRegions);
     QObject::connect(dialog, SIGNAL(sendROIRegions(std::vector<std::pair<int, int>>)), this, SLOT(getROIRegions(std::vector<std::pair<int, int>>)));
+    QObject::connect(dialog, SIGNAL(sendROIRegions(std::vector<std::pair<int, int>>)), this, SIGNAL(setROIRegion(std::vector<std::pair<int, int>>)));
     QObject::connect(dialog, SIGNAL(sendROIRegions(std::vector<std::pair<int, int>>)), this->mainChart, SLOT(ROIRegionChange(std::vector<std::pair<int, int>>)));
     QObject::connect(dialog, SIGNAL(sendShowRegion(int, int)), this, SLOT(sendSpecificRegion(int, int)));
     dialog->show();
@@ -254,7 +264,7 @@ void MainWindow::doAutoPeakSearch(int start, int end, int left, int right){
     double FHWM = 2.3548200 * gaussian.second;
 
     this->roiRegions.push_back({start, end});
-    setROIRegion(this->roiRegions);
+    emit setROIRegion(this->roiRegions);
 
     qDebug() << gaussian.first;
     qDebug() << gaussian.second;

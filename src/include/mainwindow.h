@@ -6,6 +6,8 @@
 #include <QGridLayout>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QTabWidget>
+
 
 #include <QLabel>
 
@@ -36,6 +38,7 @@
 #include "utils.h"
 #include "spectochart.h"
 #include "dialogs.h"
+#include "widgets.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -61,7 +64,9 @@ private:
 
     void setSignalFromMenuBar();
 
-    void setSidePannel(QStringList list);
+    void setSidePannel();
+
+    void setInfoTab(QStringList list);
 
     QWidget *mainWidget;
     QGridLayout *mainLayout;
@@ -70,7 +75,10 @@ private:
     QLabel *yData;
 
     QGridLayout *bottomRemoteControl;
-    QVBoxLayout *sidePannel;
+    QTabWidget *sidePannel;
+
+    QWidget *infoTab;
+    ROITab *roiTab;
 
     SpectoChart *mainChart;
     QChartView *mainChartView;
@@ -93,7 +101,6 @@ private:
     ViewMenu *viewMenu;
     AcquisitionMenu *acquisitionMenu;
     DisplayMenu *displayMenu;
-    DPPMenu *dppMenu;
     AnalyzeMenu *analyzeMenu;
     HelpMenu *helpMenu;
 

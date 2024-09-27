@@ -15,6 +15,7 @@ SpectoChart::SpectoChart(){
     this->axisY = new QValueAxis;
     axisY->setRange(0, maxMagnitude);
     axisY->setTitleText("Level");
+    axisY->setLabelFormat("%g");
 
     this->addAxis(axisX, Qt::AlignBottom);
     this->mainSeries->attachAxis(axisX);

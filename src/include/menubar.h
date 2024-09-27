@@ -60,16 +60,6 @@ private:
     QAction *scale;
     QAction *calibration;
 };
-
-class DPPMenu : public QMenu {
-    Q_OBJECT
-public:
-    DPPMenu();
-
-private:
-    QAction *openStartDialog;
-};
-
 class AnalyzeMenu : public QMenu {
     Q_OBJECT
 public:
