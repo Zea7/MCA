@@ -11,6 +11,16 @@ UartCommunicator::UartCommunicator(const std::string &portName){
     isUart();
 }
 
+bool UartCommunicator::testCommand(){
+    std::stringstream ss;
+
+    ss << "m" << "\n\r";
+
+    std::string fullCmd = ss.str();
+
+    return sendConstructedCommand(fullCmd);
+}
+
 bool UartCommunicator::sendCommand(const std::string &cmd){
     std::stringstream ss;
 
@@ -24,7 +34,7 @@ bool UartCommunicator::sendCommand(const std::string &cmd){
 bool UartCommunicator::sendCommand(const std::string &cmd, const int &param1){
     std::stringstream ss;
 
-    ss << "$" << cmd << " " << std::hex << param1 << "\n\r";
+    ss << "$" << cmd << " " << param1 << "\n\r";
 
     std::string fullCmd = ss.str();
 
@@ -116,32 +126,34 @@ bool UartCommunicator::sendConstructedCommand(const std::string &command){
     }
     qDebug() << "Sent: " << command;
 
-    std::string response = receiveResponse();
-    if (response == ACK) {
-        qDebug() << "Received ACK";
-        return true;
-    } else {
-        qDebug() << "Unknown Error";
-        return false;
-    }
+    return true;
     
 }
 
 bool UartCommunicator::isUart(){
     try{
-        if(sendCommand("FPV")){
+        if(testCommand()){
             QString response = QString::fromUtf8(receiveResponse());
 
-            if(response.split(" ")[0] == "FPV"){
-                this->FPGAVersion = response.split(" ")[1];
-                if(sendCommand("FWV")){
-                    response = QString::fromUtf8(receiveResponse());
-                    this->FWV = response.split(" ")[1];
-                }
-                qDebug() << FPGAVersion;
-                qDebug() << FWV;
-                return true;
-            }
+            qDebug() << response;
+        }
+        if(sendCommand("ID")){
+            QString response = QString::fromUtf8(receiveResponse());
+
+            qDebug() << response;
+            // if(sendCommand("FWV")){
+            //     QString response = QString::fromUtf8(receiveResponse());
+
+            //     qDebug() << response;
+
+            //     if(sendCommand("FPV")){
+            //         QString response = QString::fromUtf8(receiveResponse());
+
+            //         qDebug() << response;
+            //     }
+            // }
+            return true;
+        
         }
         this->live = false;
         qDebug() << "Is not UART";

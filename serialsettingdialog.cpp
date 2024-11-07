@@ -88,14 +88,16 @@ void SerialSettingDialog::setComboBoxes(){
         this->channelCountSelectComboBox->addItem(item);
     }
 
-    std::string port = getUARTPort();
-    this->portBox->addItem(QString::fromUtf8(port));
+    std::vector<std::string> ports = getUARTPort();
+    for(auto port : ports){
+        this->portBox->addItem(QString::fromUtf8(port));
+    }
 }
 
-std::string SerialSettingDialog::getUARTPort(){
+std::vector<std::string> SerialSettingDialog::getUARTPort(){
     UartDetector *detector = new UartDetector();
 
-    std::string port = detector->getPort();
+    std::vector<std::string> port = detector->getPort();
     return port;
 }
 

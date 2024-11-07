@@ -157,7 +157,7 @@ private:
 
 
 private slots:
-    std::string getUARTPort();
+    std::vector<std::string> getUARTPort();
     void sendSerialPort();
 };
 

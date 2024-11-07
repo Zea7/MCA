@@ -35,6 +35,8 @@ public:
 
     bool isLive(){return live;}
 
+    bool testCommand();
+
     bool sendCommand(const std::string &cmd);
     bool sendCommand(const std::string &cmd, const std::string &param1);
     bool sendCommand(const std::string &cmd, const int &param1);
@@ -52,12 +54,13 @@ private:
 
 class UartDetector {
 private:
-    std::string port;
+    std::vector<std::string> port;
 
     
 
-    std::string detectUartDevice() {
+    std::vector<std::string> detectUartDevice() {
         std::vector<std::string> ports;
+        std::vector<std::string> ans;
         for (int i=1;i<=256;i++){
             std::string port = "COM" + std::to_string(i);
             HANDLE hComm = CreateFileA(port.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
@@ -84,14 +87,14 @@ private:
                     if (SetCommState(hComm, &dcbSerialParams)) {
                         CloseHandle(hComm);
                         qDebug() << port;
-                        return port;
+                        ans.push_back(port);
                     }
                 }
 
                 CloseHandle(hComm);
             }
         }
-        return "";
+        return ans;
     }
 
 public:
@@ -102,7 +105,7 @@ public:
     ~UartDetector() {
     }
 
-    std::string getPort(){return port;}
+    std::vector<std::string> getPort(){return port;}
 
 };
 
