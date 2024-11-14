@@ -24,9 +24,19 @@ void DetectThread::run(){
                 // }
                 // emit setData(data);
 
-                qDebug() << response;
+                QStringList list;
+                list = response.split("\n\n\r");
 
-                running = false;
+                qDebug() << list;
+
+                for(auto line : list){
+                    int value = line.split(" ")[1].toInt();
+
+                    value /= 16;
+                    data[value]++;
+                }
+
+                emit setData(data);
             }
         } catch (std::runtime_error &error){
             break;

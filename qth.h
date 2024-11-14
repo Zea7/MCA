@@ -2,6 +2,8 @@
 #define QTH_H
 
 #include <QThread>
+#include <QString>
+#include <QStringList>
 #include <vector>
 
 #include "serial.h"
@@ -20,6 +22,7 @@ private:
     bool running = true;
     std::vector<int> data = std::vector<int>(1024, 0);
     UartCommunicator *uart;
+    QStringList responseList;
 
 signals:
     void setData(std::vector<int> data);
