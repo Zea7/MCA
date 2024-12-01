@@ -362,5 +362,6 @@ void MainWindow::stopDetection(){
 }
 
 void MainWindow::setMainChartData(std::vector<int> data){
+    this->data->setData(data);
     this->mainChart->setData(data);
 }
