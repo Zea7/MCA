@@ -65,6 +65,7 @@ std::string UartCommunicator::receiveResponse() {
     char buffer[256];
     DWORD bytesRead;
     std::string response;
+    bool go = false;
 
     do {
         if (!ReadFile(hSerial, buffer, sizeof(buffer), &bytesRead, NULL)){
@@ -72,6 +73,7 @@ std::string UartCommunicator::receiveResponse() {
         }
 
         response.append(buffer, bytesRead);
+        
     } while (bytesRead > 0);
 
     return response;
@@ -141,17 +143,28 @@ bool UartCommunicator::isUart(){
             QString response = QString::fromUtf8(receiveResponse());
 
             qDebug() << response;
-            // if(sendCommand("FWV")){
-            //     QString response = QString::fromUtf8(receiveResponse());
+            if(sendCommand("FWV")){
+                QString response = QString::fromUtf8(receiveResponse());
 
-            //     qDebug() << response;
+                qDebug() << response;
 
-            //     if(sendCommand("FPV")){
-            //         QString response = QString::fromUtf8(receiveResponse());
+                if(sendCommand("FPV")){
+                    QString response = QString::fromUtf8(receiveResponse());
 
-            //         qDebug() << response;
-            //     }
-            // }
+                    qDebug() << response;
+                }
+                if(sendCommand("TRI", 33300)){
+                    QString response = QString::fromUtf8(receiveResponse());
+
+                    qDebug() << response;
+                }
+
+                if(sendCommand("Status")){
+                    QString response = QString::fromUtf8(receiveResponse());
+
+                    qDebug() << response;
+                }
+            }
             return true;
         
         }

@@ -1,6 +1,8 @@
 #ifndef QTH_H
 #define QTH_H
 
+#define DATA_MAX_SIZE 1024
+
 #include <QThread>
 #include <QString>
 #include <QStringList>
@@ -20,7 +22,7 @@ private:
     void run();
 
     bool running = true;
-    std::vector<int> data = std::vector<int>(1024, 0);
+    int data[DATA_MAX_SIZE] = {0};
     UartCommunicator *uart;
     QStringList responseList;
 
