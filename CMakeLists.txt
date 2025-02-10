@@ -20,38 +20,9 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(MCA
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        menubar.h
-        mainwindow.cpp
-        mainwindow.h
-        data.h
-        file.h
-        utils.h
-        toolbar.h
-        dialogs.h
-        spectochart.h
-        serial.h
-        widgets.h
-        qth.h
-        includes/mainwindow.h
-
-        detectthread.cpp
-        toolbar.cpp
-        spectochart.cpp
-        defineroidialog.cpp
-        autopeakdialog.cpp
-        utils.cpp
-        uart.cpp
-        data.cpp
-        file.cpp
-        acquisitionmenu.cpp
-        analyzemenu.cpp
-        displaymenu.cpp
-        filemenu.cpp
-        helpmenu.cpp
-        viewmenu.cpp
-        icons.qrc
-        serialsettingdialog.cpp
-        roitab.cpp
+        includes/*.h
+        main.cpp
+        sources/*.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET MCA APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
