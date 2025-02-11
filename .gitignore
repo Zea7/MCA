@@ -80,3 +80,6 @@ Desktop_*/
 CMakeFiles/
 build/
 .vscode/
+*.ninja
+.ninja*
+*.csv

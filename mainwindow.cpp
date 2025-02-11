@@ -3,9 +3,14 @@
 
 MainWindow::MainWindow(){
     setUI();
+    this->data = new MCAData();
 }
 
 void MainWindow::setUI(){
+    this->tempData = std::vector<int> (1024,0);
+    for(int i=0;i<1024;i++){
+        this->tempData[i] = 0;
+    }
     resize(1700, 1000);
     this->mainWidget = new QWidget();
     this->mainLayout = new QGridLayout();
@@ -51,7 +56,6 @@ void MainWindow::setUI(){
     this->mainLayout->addWidget(this->sidePannel, 0, 7, 9, 2);
     this->mainLayout->addLayout(this->bottomRemoteControl, 7, 0, 2, 7);
 
-    
 }
 
 void MainWindow::setMCAMenuBar(){
@@ -214,7 +218,7 @@ void MainWindow::autoResizeXAxis() {
     std::pair<int, int> border = getBorderByThreshold(data, this->threshold);
     this->startSample = border.first; this->endSample = border.second;
 
-    emit setSampleRange(startSample, endSample);
+    emit setSampleRange(0, 256);
     emit resizeXAxis();
 }
 
@@ -247,7 +251,7 @@ void MainWindow::showSpecificRegion(){
 }
 
 void MainWindow::sendSpecificRegion(int start, int end){
-    emit setSampleRange(start, end);
+    emit setSampleRange(0, 256);
     emit resizeXAxis();
 }
 
@@ -300,7 +304,7 @@ void MainWindow::getArgumentsToCalculateGaussian(int roiRegionIndex, int pointIn
         qDebug() << "No data";
         return ;
     }
-    std::vector<int> recentData = this->data->getData();
+    std::vector<int> recentData = this->tempData;
 
     std::vector<std::pair<int, int>> chosenRegion;
     chosenRegion.push_back(roiRegions[roiRegionIndex]);
@@ -347,7 +351,12 @@ void MainWindow::getArgumentsToCalculateGaussian(int roiRegionIndex, int pointIn
 }
 
 void MainWindow::getSerialPort(QString port){
+    this->port = port;
     this->uart = new UartCommunicator(port.toStdString());
+
+    
+    TempDialog *cmd  = new TempDialog(this->uart);
+    cmd->show();
 
     this->detectThread = new DetectThread(this->uart);
     QObject::connect(this->detectThread, &DetectThread::setData, this, &MainWindow::setMainChartData);
@@ -362,5 +371,23 @@ void MainWindow::stopDetection(){
 }
 
 void MainWindow::setMainChartData(std::vector<int> data){
-    this->mainChart->setData(data);
+    qDebug() << "Before set data";
+    std::vector<int> setting(1024, 0);
+    int a = 0;
+    for(int i=0;i<1024;i++){
+        if(i<10){
+            setting[i] = 0;
+        }
+        else {
+            setting[i] = data[i];
+            a += data[i] - tempData[i];
+        }
+    }
+    getNum -= a;
+    if(getNum < 0) this->detectThread->stop();
+    qDebug() << "Remain " << getNum;
+    this->data->setData(setting);
+    this->tempData = setting;
+    this->mainChart->setData(setting);
+    qDebug()<<"Setting end";
 }

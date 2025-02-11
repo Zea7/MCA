@@ -87,9 +87,11 @@ void MCAData::saveAsCSV(QString fileName){
 
    
     out << header << "<<MCA DATA>>\n";
+    qDebug() << "Start saving";
     for(int i : data){
         out << i << ",\n";
     }
+    qDebug() << "End saving";
 
     file.close();
 }

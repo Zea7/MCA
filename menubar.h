@@ -1,4 +1,4 @@
-#ifndef MENUBAR_H
+    #ifndef MENUBAR_H
 #define MENUBAR_H
 
 #include <QMenu>

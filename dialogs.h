@@ -12,6 +12,7 @@
 #include <QComboBox>
 #include <QFrame>
 #include <QStringList>
+#include <QListWidget>
 
 #include <vector>
 #include <algorithm>
@@ -161,5 +162,21 @@ private slots:
     void sendSerialPort();
 };
 
+class TempDialog : public QDialog {
+    Q_OBJECT
 
+private slots:
+    void getEntered();
+
+private:
+    QListWidget *log;
+    QLineEdit *inputLine;
+    QVBoxLayout *mainLayout;
+
+    UartCommunicator *uart;
+
+public:
+    TempDialog(UartCommunicator *uart);
+
+};
 #endif

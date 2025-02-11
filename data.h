@@ -15,7 +15,7 @@ public:
     QStringList getHeaderData();
     void saveAsCSV(QString fileName);
     void saveAsTXT(QString fileName);
-    void setData(std::vector<int> data){this->data = data;}
+    void setData(std::vector<int> &data){this->data = data;}
 
 private:
     QStringList dataList;

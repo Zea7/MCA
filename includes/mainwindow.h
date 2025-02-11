@@ -1,6 +1,16 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+/* 
+    MainWindow Header
+
+    프로그램의 기본 화면이자 메인 화면 위젯을 다루는 헤더 파일.
+    전체적인 프로그램 기능 중 메인 프로세스 또한 같이 담당하는 부분으로
+    대부분의 기능이 모여있는 헤더파일.
+
+    
+*/
+
 #include <QMainWindow>
 #include <QWidget>
 #include <QGridLayout>
@@ -101,16 +111,14 @@ private:
     int endSample = 1024;
     int maxMagnitude = 1;
     int threshold = 0;
-
-    int getNum = 9654000;
+    
 
     QString port;
+
     /* 
         for test
     */
     int openTime = 0;
-
-    std::vector<int> tempData;
 
 
     FileMenu *fileMenu;

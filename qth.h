@@ -1,8 +1,11 @@
 #ifndef QTH_H
 #define QTH_H
 
+#define DATA_MAX_SIZE 1024
+
 #include <QThread>
 #include <vector>
+#include <cstring>
 
 #include "serial.h"
 
@@ -18,7 +21,7 @@ private:
     void run();
 
     bool running = true;
-    std::vector<int> data = std::vector<int>(1024, 0);
+    int data[16384];
     UartCommunicator *uart;
 
 signals:
