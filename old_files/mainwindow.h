@@ -84,7 +84,7 @@ private:
     QLabel *xData;
     QLabel *yData;
 
-    QGridLayout *bottomRemoteControl;
+    QGridLayout *bottomControlPannel;
     QTabWidget *sidePannel;
 
     QCheckBox *setLogScaleCheckBox;

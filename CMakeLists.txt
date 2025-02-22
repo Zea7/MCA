@@ -20,9 +20,17 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(MCA
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        includes/*.h
-        main.cpp
-        sources/*.cpp
+        includes/mainwindow.h
+        # includes/dialogs.h
+        # includes/threads.h
+        # includes/utils.h
+        includes/widgets.h
+
+        sources/functions/mainwindow_function.cpp
+        sources/functions/roitabwidget_function.cpp
+        sources/UI/mainwindow_ui.cpp
+        sources/UI/mainspectrumchart_ui.cpp
+        sources/UI/roitabwidget_ui.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET MCA APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -43,7 +51,7 @@ else()
 endif()
 
 target_link_libraries(MCA PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Charts Qt${QT_VERSION_MAJOR}::Gui)
-target_include_directories(MCA PUBLIC include)
+target_include_directories(MCA PUBLIC includes)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
@@ -56,7 +64,7 @@ set_target_properties(MCA PROPERTIES
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE
-    # WIN32_EXECUTABLE ON
+    WIN32_EXECUTABLE ON
 )
 
 include(GNUInstallDirs)

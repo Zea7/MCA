@@ -14,7 +14,7 @@ void MainWindow::setUI(){
     QObject::connect(dialog, &SerialSettingDialog::setSerialPort, this, &MainWindow::getSerialPort);
     dialog->exec();
 
-    this->bottomRemoteControl = new QGridLayout();
+    this->bottomControlPannel = new QGridLayout();
     this->sidePannel = new QTabWidget();
 
     QLabel *channel = new QLabel("Channel : ");
@@ -27,11 +27,11 @@ void MainWindow::setUI(){
     this->setLogScaleCheckBox = new QCheckBox("Set Y Axis Log Scale");
 
 
-    this->bottomRemoteControl->addWidget(channel, 0, 0, 1, 1);
-    this->bottomRemoteControl->addWidget(xData, 0, 1, 1, 1);
-    this->bottomRemoteControl->addWidget(level, 1, 0, 1,1);
-    this->bottomRemoteControl->addWidget(yData, 1, 1, 1, 1);
-    this->bottomRemoteControl->addWidget(this->setLogScaleCheckBox, 0, 2, 1, 1);
+    this->bottomControlPannel->addWidget(channel, 0, 0, 1, 1);
+    this->bottomControlPannel->addWidget(xData, 0, 1, 1, 1);
+    this->bottomControlPannel->addWidget(level, 1, 0, 1,1);
+    this->bottomControlPannel->addWidget(yData, 1, 1, 1, 1);
+    this->bottomControlPannel->addWidget(this->setLogScaleCheckBox, 0, 2, 1, 1);
 
 
     this->mainWidget->setLayout(mainLayout);
@@ -49,7 +49,7 @@ void MainWindow::setUI(){
 
     this->mainLayout->addWidget(this->mainChartView, 0, 0, 7, 7);
     this->mainLayout->addWidget(this->sidePannel, 0, 7, 9, 2);
-    this->mainLayout->addLayout(this->bottomRemoteControl, 7, 0, 2, 7);
+    this->mainLayout->addLayout(this->bottomControlPannel, 7, 0, 2, 7);
 
     
 }

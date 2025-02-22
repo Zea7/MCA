@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "serial.h"
+// #include "serial.h"
 #include <QApplication>
 #include <iostream>
 #include <QLoggingCategory>
@@ -10,7 +10,7 @@ int main(int argc, char *argv[]){
 
     window.show();
 
-    UartDetector *detector = new UartDetector();
+    // UartDetector *detector = new UartDetector();
     
 
     return app.exec();

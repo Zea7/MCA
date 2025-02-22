@@ -20,63 +20,56 @@
 #include <QPalette>
 #include <QString>
 
-#include "dialogs.h"
+#include <QChart>
 
-class ROITab : public QWidget {
+// #include "dialogs.h"
+
+class MainSpectrumChart : public QChart {
     Q_OBJECT
 
 public:
-    ROITab();
+    MainSpectrumChart();
+
+};
+
+class ROITabWidget : public QWidget {
+    Q_OBJECT
+
+public:
+    ROITabWidget();
 
 private:
-    void setUI();
-
-    void setPointCountComboBox();
-    void setChangeColorButton();
-    void setInformationFrame();
+    void setWidgetUI();
+    void setInformationFrameUI();
+    void setChangeColorButtonUI();
+    void setPointCountComboBoxUI();
 
     QVBoxLayout *mainLayout;
-
-    QHBoxLayout *roiRegionLayout;
-    QPushButton *changeROIRegions;
-    QComboBox *roiComboBox;
-
-    QComboBox *pointCountComboBox;
-
-    QHBoxLayout *changeColorButtonLayout;
-    QPushButton *changeColorButton;
-
-    /* 
-        Widgets related with Information Frame
-
-
-    */
+    QComboBox *roiListComboBox;
+    QComboBox *pointsNumberComboBox;
     QFrame *informationFrame;
-    QVBoxLayout *frameLayout;
-    QLabel *lineFunction;
-    QLabel *gaussianFunction;
-    QLabel *FWHM;
-    QLabel *areaSize;
 
-    QString lineLabel = QStringLiteral("Linear Function Calculate by LSM : ");
-    QString gaussianLabel = QStringLiteral("Gaussian Distribution Function Calculate by LSM : ");
-    QString fwhmLabel = QStringLiteral("Calculated FWHM : ");
-    QString areaLabel = QStringLiteral("Calculated Area Size : ");
+    QPushButton *changeRegionsListButton;
+    QHBoxLayout *roiRegionControlLayout;
 
+    QPushButton *changeRegionColorButton;
+    QHBoxLayout *changeColorButtonLayout;
 
-    std::vector<std::pair<int, int>> roiRegions;
-    std::vector<std::pair<int, std::pair<int, int>>> data;
+    // Information Frame Widgets
+    QVBoxLayout *informationFrameLayout;
 
-signals:
-    void openROIDialog();
-    void sendArgumentsToCalculateGaussian(int roiRegoinIndex, int pointsIndex);
+    QLabel *estimatedLineFunctionLabel;
+    QLabel *estimatedGaussianFunctionLabel;
+    QLabel *estimatedFWHMLabel;
+    QLabel *estimatedAreaSizeLabel;
+
+    QString estimatedLineFunctionString = QStringLiteral("Linear Function Calculate by LSM : ");
+    QString estimatedGaussianFunctionString = QStringLiteral("Gaussian Distribution Function Calculate by LSM : ");
+    QString estimatedFWHMString = QStringLiteral("Calculated FWHM : ");
+    QString estimatedAreaSizeString = QStringLiteral("Calculated Area Size : ");
 
 public slots:
     void getROIRegions(std::vector<std::pair<int, int>> roiRegions);
-    void getGaussianDistributionData(std::vector<std::pair<double ,double>> data);
-
-private slots:
-    void selectedROIRegionIndex(int index);
 };
 
 

@@ -37,16 +37,7 @@
 #include <thread>
 #include <atomic>
 
-#include "menubar.h"
-#include "toolbar.h"
-#include "data.h"
-#include "utils.h"
-#include "spectochart.h"
-#include "dialogs.h"
 #include "widgets.h"
-#include "serial.h"
-#include "qth.h"
-
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
@@ -57,26 +48,27 @@ private:
     /*  
         UI를 세팅하는 함수들. 
 
-        setUI()         :   메인 위젯을 설정해주고 기본적인 창의 크기를 결정하는 함수.
-        setMCAMenuBar()    :   메뉴바의 형태를 결정짓는 함수.
-        setChartView()   :   그래프를 보여줄 chart의 형태를 결정하는 함수.
+        setMainUI()         :   Window의 CentralWidget을 MainWindow::mainWidget으로 설정하고 
+                                mainWidget의 side, bottom pannel과 chartview의 사이즈를 설정하는 함수.
+        setMCAMenuBar()     :   메뉴바의 형태를 결정짓는 함수.
+        setMainChartUI()    :   mainWidget에 들어가는 chartview의 형태를 전부 결정하는 함수.   
+        setSidePannelUI()   :   mainWidget의 side pannel tab의 형태를 전부 결정하는 함수.
+        setBottomControlPannelUI()  :   mainWidget의 bottom control pannel의 형태를 전부 결정하는 함수.
     */
 
+    void setMainUI();
+    void setMainChartUI();
+    void setSidePannelUI();
+    void setBottomControlPannelUI();
 
-    void setUI();
+    void setMenuBar();
 
-    void setMCAMenuBar();
+    // void setSignalFromMenuBar();
 
-    void setChartView();
-
-    void setSignalFromMenuBar();
-
-    void setSidePannel();
-
-    void setInfoTab(QStringList list);
-    // std::pair<double, double> getLinearFuncFromData(std::vector<std::pair<int, int>> points);
-    // std::pair<double, double> getGaussianDistributionFromData(std::vector<double> dataset);
-    double getAreaSizeFromData(std::vector<double> dataset);
+    // void setInfoTab(QStringList list);
+    // // std::pair<double, double> getLinearFuncFromData(std::vector<std::pair<int, int>> points);
+    // // std::pair<double, double> getGaussianDistributionFromData(std::vector<double> dataset);
+    // double getAreaSizeFromData(std::vector<double> dataset);
 
     QWidget *mainWidget;
     QGridLayout *mainLayout;
@@ -84,15 +76,15 @@ private:
     QLabel *xData;
     QLabel *yData;
 
-    QGridLayout *bottomRemoteControl;
+    QGridLayout *bottomControlPannel;
     QTabWidget *sidePannel;
 
     QCheckBox *setLogScaleCheckBox;
 
-    QWidget *infoTab;
-    ROITab *roiTab;
+    QWidget *basicInformationTab;
+    ROITabWidget *regionInformationTab;
 
-    SpectoChart *mainChart;
+    MainSpectrumChart *mainChart;
     QChartView *mainChartView;
     QValueAxis *axisX;
     QValueAxis *axisY;
@@ -109,26 +101,26 @@ private:
     int openTime = 0;
 
 
-    FileMenu *fileMenu;
-    ViewMenu *viewMenu;
-    AcquisitionMenu *acquisitionMenu;
-    DisplayMenu *displayMenu;
-    AnalyzeMenu *analyzeMenu;
-    HelpMenu *helpMenu;
+    // FileMenu *fileMenu;
+    // ViewMenu *viewMenu;
+    // AcquisitionMenu *acquisitionMenu;
+    // DisplayMenu *displayMenu;
+    // AnalyzeMenu *analyzeMenu;
+    // HelpMenu *helpMenu;
 
-    ToolBar *toolbar;
+    // ToolBar *toolbar;
 
-    MCAData *data;
+    // MCAData *data;
 
     // ROI
     std::vector<std::pair<int, int>> roiRegions;
 
     // Peaks
-    std::vector<PeakInfo> peaks;
+    // std::vector<PeakInfo> peaks;
 
-    UartCommunicator *uart;
+    // UartCommunicator *uart;
 
-    DetectThread *detectThread;
+    // DetectThread *detectThread;
 
 signals:
     void setSampleRange(int start, int end);
@@ -142,33 +134,33 @@ signals:
     void sendGaussianDistributionData(std::vector<std::pair<double, double>> data);
 
 private slots:
-    void openMCAFile();
-    void saveMCAFile();
-    void autoResizeXAxis();
-    void autoResizeYAxis();
+    // void openMCAFile();
+    // void saveMCAFile();
+    // void autoResizeXAxis();
+    // void autoResizeYAxis();
     
-    // ROI
-    void openROIDialog();
-    void getROIRegions(std::vector<std::pair<int, int>> roiRegions);
+    // // ROI
+    // void openROIDialog();
+    // void getROIRegions(std::vector<std::pair<int, int>> roiRegions);
 
-    void showSpecificRegion();
-    void sendSpecificRegion(int start, int end);
+    // void showSpecificRegion();
+    // void sendSpecificRegion(int start, int end);
 
-    // SpectoChart
-    void ShowHoveredData(bool status, int index, int value);
+    // // SpectoChart
+    // void ShowHoveredData(bool status, int index, int value);
 
-    // Auto peak search
-    void openAutoPeakDialog();
-    void doAutoPeakSearch(int start, int end, int left, int right);
+    // // Auto peak search
+    // void openAutoPeakDialog();
+    // void doAutoPeakSearch(int start, int end, int left, int right);
 
-    void getArgumentsToCalculateGaussian(int roiRegionIndex, int pointIndex);
+    // void getArgumentsToCalculateGaussian(int roiRegionIndex, int pointIndex);
 
-    void getSerialPort(QString port);
+    // void getSerialPort(QString port);
 
-    void startDetection();
-    void stopDetection();
+    // void startDetection();
+    // void stopDetection();
 
-    void setMainChartData(std::vector<int> data);
+    // void setMainChartData(std::vector<int> data);
 };
 
 #endif
