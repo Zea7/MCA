@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "types.h"
 // #include "serial.h"
 #include <QApplication>
 #include <iostream>
@@ -11,7 +12,7 @@ int main(int argc, char *argv[]){
     window.show();
 
     // UartDetector *detector = new UartDetector();
-    
+    // LevelSeriesData *data = new LevelSeriesData(1025);
 
     return app.exec();
 }

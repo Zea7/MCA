@@ -25,12 +25,14 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         # includes/threads.h
         # includes/utils.h
         includes/widgets.h
+        includes/types.h
 
         sources/functions/mainwindow_function.cpp
         sources/functions/roitabwidget_function.cpp
         sources/UI/mainwindow_ui.cpp
         sources/UI/mainspectrumchart_ui.cpp
         sources/UI/roitabwidget_ui.cpp
+        sources/types/levelseriesdata.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET MCA APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -64,7 +66,7 @@ set_target_properties(MCA PROPERTIES
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE ON
+    # WIN32_EXECUTABLE ON
 )
 
 include(GNUInstallDirs)

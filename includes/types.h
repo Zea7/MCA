@@ -6,6 +6,8 @@
 
 #include <vector>
 
+#include <QDebug>
+
 class LevelSeriesData {
 /* 
     MCA 프로그램의 기본적인 데이터를 다루는 클래스.
@@ -52,13 +54,15 @@ public:
 
 private:
     int channelSize;
-    int rawChannelSize;
+    int rawChannelSize = 0;
     std::vector<int> levelSeries;
     std::vector<int> rawDataSeries;
 
     std::vector<std::pair<int, int>> roiRegions;
 
     void setLevelSeries();
+    bool checkSizePolicy(int size);
+    int getSizeFromPolicy(int size);
 };
 
 #endif
