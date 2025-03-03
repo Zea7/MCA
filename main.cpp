@@ -12,7 +12,7 @@ int main(int argc, char *argv[]){
     window.show();
 
     // UartDetector *detector = new UartDetector();
-    // LevelSeriesData *data = new LevelSeriesData(1025);
+    LevelSeriesData *data = new LevelSeriesData(23423423);
 
     return app.exec();
 }

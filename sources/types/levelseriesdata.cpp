@@ -6,21 +6,39 @@ LevelSeriesData::LevelSeriesData() {
 
 LevelSeriesData::LevelSeriesData(int channelSize) : channelSize(getSizeFromPolicy(channelSize)) {
     // qDebug() << "Is channel size right? " << this->checkSizePolicy(channelSize);
-    // qDebug () << this->channelSize;
+    qDebug () << this->channelSize;
     
 }
 
-LevelSeriesData::LevelSeriesData(std::vector<int> rawDataSeries) : rawDataSeries(rawDataSeries){
+LevelSeriesData::LevelSeriesData(std::vector<int> rawDataSeries){
+    this->rawChannelSize = getSizeFromPolicy(rawDataSeries.size());
+    
+    std::vector<int> data;
 
+    for(int i=0; i<rawChannelSize; i++){
+        data.push_back(rawDataSeries[i]);
+    }
+
+    this->rawDataSeries = data;
 }
 
 LevelSeriesData::LevelSeriesData(int channelSize, std::vector<int> rawDataSeries) :
-   channelSize(channelSize), rawDataSeries(rawDataSeries) {
-    this->rawChannelSize = rawDataSeries.size();
+   channelSize(getSizeFromPolicy(channelSize)) {
+    this->rawChannelSize = getSizeFromPolicy(rawDataSeries.size());
 
+    std::vector<int> data;
+    for(int i=0; i<rawChannelSize; i++){
+        data.push_back(rawDataSeries[i]);
+    }
+
+    this->rawDataSeries = data;
+
+    this->setLevelSeries();
 }
 
 LevelSeriesData::~LevelSeriesData() {
+    delete &rawDataSeries;
+    delete &levelSeries;
 }
 
 /* 
@@ -28,6 +46,7 @@ LevelSeriesData::~LevelSeriesData() {
 */
 
 void LevelSeriesData::setRawDataSeriesWithLevelSeries(std::vector<int> rawDataSeries) {
+    this->rawChannelSize = getSizeFromPolicy(rawDataSeries.size());
 
 }
 
@@ -36,7 +55,25 @@ void LevelSeriesData::setRawDataSeriesWithLevelSeries(std::vector<int> rawDataSe
 */
 
 void LevelSeriesData::setLevelSeries(){
-    
+    assert(checkSizePolicy(this->channelSize) && checkSizePolicy(this->rawChannelSize));
+
+    int channelSizeRate = rawChannelSize / channelSize;
+    if (channelSizeRate <= 0) {
+        qDebug() << "Error! Input channel size is larger than original data channel size.";
+        return ;
+    }
+
+    std::vector<int> data;
+    for(int i=0;i<rawChannelSize;i+=channelSizeRate){
+        int dataPoint = 0;
+        for(int j=0;j<channelSize;j++){
+            dataPoint += this->rawDataSeries[i+j];
+        }
+
+        data.push_back(dataPoint);
+    }
+
+    this->levelSeries = data;
 }
 
 bool LevelSeriesData::checkSizePolicy(int size){
@@ -45,7 +82,9 @@ bool LevelSeriesData::checkSizePolicy(int size){
         counterPosition++;
         binarySize = binarySize >> 1;
     }
-    return ((1 << counterPosition) == size);
+
+    int resultSize = 1 << counterPosition;
+    return (resultSize == size) && (resultSize >= DATA_MIN_SIZE) && (resultSize <= DATA_MAX_SIZE);
 }
 
 int LevelSeriesData::getSizeFromPolicy(int size){
@@ -55,5 +94,7 @@ int LevelSeriesData::getSizeFromPolicy(int size){
         size = size >> 1;
     }
 
-    return 1 << counterPosition;
+    int ans = 1 << counterPosition;
+
+    return ans > DATA_MIN_SIZE ? (ans > DATA_MAX_SIZE ? DATA_MAX_SIZE : ans) : DATA_MIN_SIZE;
 }
