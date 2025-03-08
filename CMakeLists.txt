@@ -21,7 +21,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         includes/mainwindow.h
-        # includes/dialogs.h
+        includes/dialogs.h
         # includes/threads.h
         # includes/utils.h
         includes/widgets.h
@@ -33,6 +33,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         sources/UI/mainspectrumchart_ui.cpp
         sources/UI/roitabwidget_ui.cpp
         sources/types/levelseriesdata.cpp
+        sources/UI/spectrumlistmanager_ui.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET MCA APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

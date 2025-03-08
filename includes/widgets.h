@@ -24,12 +24,14 @@
 
 // #include "dialogs.h"
 
-class MainSpectrumChart : public QChart {
+class SpectrumChart : public QChart {
     Q_OBJECT
 
 public:
-    MainSpectrumChart();
+    SpectrumChart();
+    ~SpectrumChart();
 
+    
 };
 
 class ROITabWidget : public QWidget {
@@ -71,6 +73,5 @@ private:
 public slots:
     void getROIRegions(std::vector<std::pair<int, int>> roiRegions);
 };
-
 
 #endif

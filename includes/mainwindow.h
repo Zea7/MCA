@@ -37,6 +37,10 @@
 #include <thread>
 #include <atomic>
 
+#include <QMenu>
+#include <QAction>
+#include <QToolBar>
+
 #include "widgets.h"
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -61,7 +65,7 @@ private:
     void setSidePannelUI();
     void setBottomControlPannelUI();
 
-    void setMenuBar();
+    void setMenuAndToolBar();
 
     // void setSignalFromMenuBar();
 
@@ -122,16 +126,56 @@ private:
 
     // DetectThread *detectThread;
 
+// private slot for menu & tool bar
+private:
+    QMenu *fileMenu;
+    QAction *file_open;
+    QAction *file_closeAll;
+    QAction *file_save;
+    QAction *file_saveAs;
+    QAction *file_preferences;
+    QAction *file_exit;
+
+    QMenu *viewMenu;
+    QAction *view_toolBar;
+    QAction *view_statusBar;
+    QAction *view_spectraList;
+
+    QMenu *acquisitionMenu;
+    QAction *acquisition_acquisitionSetup;
+    QAction *acquisition_changeStartStop;
+    QAction *acquisition_repeatMesureTest;
+    QAction *acquisition_deleteDatasetTime;
+    QAction *acquisition_disconnect;
+
+    QMenu *displayMenu;
+    QAction *display_scale;
+    QAction *display_calibration;
+
+    QMenu *analyzeMenu;
+    QAction *analyze_calibrate;
+    QAction *analyze_peakSearch;
+    QAction *analyze_defineROI;
+
+    QMenu *helpMenu;
+    QAction *help_help;
+
+    QToolBar *toolBar;
+
+// private sections for main functions
+private:
+    void dialogTest();
+
 signals:
-    void setSampleRange(int start, int end);
-    void setMaxMagnitude(int magnitude);
-    void resizeXAxis();
-    void resizeYAxis();
+    // void setSampleRange(int start, int end);
+    // void setMaxMagnitude(int magnitude);
+    // void resizeXAxis();
+    // void resizeYAxis();
 
-    void setROIRegion(std::vector<std::pair<int, int>> roiRegions);
-    void selectedROIRegionToShow(std::vector<std::pair<int, int>> roiRegions);
+    // void setROIRegion(std::vector<std::pair<int, int>> roiRegions);
+    // void selectedROIRegionToShow(std::vector<std::pair<int, int>> roiRegions);
 
-    void sendGaussianDistributionData(std::vector<std::pair<double, double>> data);
+    // void sendGaussianDistributionData(std::vector<std::pair<double, double>> data);
 
 private slots:
     // void openMCAFile();
