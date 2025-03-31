@@ -39,7 +39,7 @@ void MainWindow::setMainUI(){
 }
 
 void MainWindow::setMainChartUI() {
-    this->mainChart = new MainSpectrumChart();
+    this->mainChart = new SpectrumChart();
     this->mainChartView = new QChartView(this->mainChart);
 }
 

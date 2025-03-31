@@ -88,7 +88,7 @@ private:
     QWidget *basicInformationTab;
     ROITabWidget *regionInformationTab;
 
-    MainSpectrumChart *mainChart;
+    SpectrumChart *mainChart;
     QChartView *mainChartView;
     QValueAxis *axisX;
     QValueAxis *axisY;

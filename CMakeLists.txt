@@ -30,7 +30,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         sources/functions/mainwindow_function.cpp
         sources/functions/roitabwidget_function.cpp
         sources/UI/mainwindow_ui.cpp
-        sources/UI/mainspectrumchart_ui.cpp
+        sources/UI/spectrumchart_ui.cpp
         sources/UI/roitabwidget_ui.cpp
         sources/types/levelseriesdata.cpp
         sources/UI/spectrumlistmanager_ui.cpp

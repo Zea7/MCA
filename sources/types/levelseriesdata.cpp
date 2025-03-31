@@ -58,7 +58,7 @@ void LevelSeriesData::setLevelSeries(){
     assert(checkSizePolicy(this->channelSize) && checkSizePolicy(this->rawChannelSize));
 
     int channelSizeRate = rawChannelSize / channelSize;
-    if (channelSizeRate <= 0) {
+    if (channelSizeRate <= 1) {
         qDebug() << "Error! Input channel size is larger than original data channel size.";
         return ;
     }
@@ -66,7 +66,7 @@ void LevelSeriesData::setLevelSeries(){
     std::vector<int> data;
     for(int i=0;i<rawChannelSize;i+=channelSizeRate){
         int dataPoint = 0;
-        for(int j=0;j<channelSize;j++){
+        for(int j=0;j<channelSizeRate;j++){
             dataPoint += this->rawDataSeries[i+j];
         }
 

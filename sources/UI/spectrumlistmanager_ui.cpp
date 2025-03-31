@@ -23,8 +23,8 @@ void SpectrumListManager::setUI() {
     this->spectrumListLayout = new QVBoxLayout();
     setSpectrumListLayoutUI();
 
-    this->mainLayout->addLayout(this->spectrumListLayout, 1);
-    this->mainLayout->addStretch(5);
+    this->mainLayout->addLayout(this->spectrumListLayout, 4);
+    
     this->mainLayout->addLayout(this->OKCancelLayout, 1);
 
     this->setLayout(this->mainLayout);  
@@ -55,9 +55,12 @@ void SpectrumListManager::setSpectrumListLayoutUI() {
     this->spectrumSettingLayout->addWidget(this->channelSizeSelectComboBox, 2);
     this->spectrumSettingLayout->addWidget(this->changeColorPushButton, 1);
 
-    this->spectrumListLayout->setContentsMargins(1, 0.5, 1, 0.5);
-    this->spectrumListLayout->addLayout(this->spectrumSettingHintLabelLayout);
-    this->spectrumListLayout->addLayout(this->spectrumSettingLayout);
+    this->spectrumListLayout->addLayout(this->spectrumSettingHintLabelLayout, 1);
+    this->spectrumListLayout->addLayout(this->spectrumSettingLayout, 1);
+
+    this->previewChart = new SpectrumChart();
+    this->previewChartView = new QChartView(this->previewChart);
+    this->spectrumListLayout->addWidget(this->previewChartView, 8);
 }
 
 void SpectrumListManager::setOKCancelLayoutUI() {

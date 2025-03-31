@@ -8,6 +8,9 @@
 #include <QComboBox>
 
 #include <QLabel>
+#include <QChartView>
+
+#include <widgets.h>
 
 class SpectrumListManager : public QDialog {
     Q_OBJECT
@@ -43,7 +46,9 @@ private:
     QHBoxLayout *OKCancelLayout;
     QPushButton *OKButton;
     QPushButton *cancelButton;
-    
+
+    SpectrumChart *previewChart;
+    QChartView *previewChartView;
 };
 
 #endif
