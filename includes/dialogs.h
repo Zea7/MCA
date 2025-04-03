@@ -10,7 +10,12 @@
 #include <QLabel>
 #include <QChartView>
 
-#include <widgets.h>
+#include <QFile>
+#include <QFileDialog>
+#include <QTextStream>
+
+#include "widgets.h"
+#include "types.h"
 
 class SpectrumListManager : public QDialog {
     Q_OBJECT
@@ -49,6 +54,11 @@ private:
 
     SpectrumChart *previewChart;
     QChartView *previewChartView;
+
+    LevelSeriesData data;
+
+private:
+    void openMCAFile();
 };
 
 #endif

@@ -36,6 +36,32 @@ LevelSeriesData::LevelSeriesData(int channelSize, std::vector<int> rawDataSeries
     this->setLevelSeries();
 }
 
+LevelSeriesData::LevelSeriesData(std::vector<int> rawDataSeries, double liveTime, double realTime, double deadTime, QDateTime startTime) :
+    liveTime(liveTime), realTime(realTime), deadTime(deadTime), startTime(startTime) {
+    this->rawChannelSize = getSizeFromPolicy(rawDataSeries.size());
+
+    std::vector<int> data;
+
+    for(int i=0; i<rawChannelSize; i++){
+        data.push_back(rawDataSeries[i]);
+    }
+
+    this->rawDataSeries = data;
+}
+
+LevelSeriesData::LevelSeriesData(std::vector<int> rawDataSeries, double liveTime, double realTime, QDateTime startTime) :
+    liveTime(liveTime), realTime(realTime), startTime(startTime) {
+    this->deadTime = liveTime - realTime;
+    this->rawChannelSize = getSizeFromPolicy(rawDataSeries.size());
+
+    std::vector<int> data;
+
+    for(int i=0; i<rawChannelSize; i++){
+        data.push_back(rawDataSeries[i]);
+    }
+
+    this->rawDataSeries = data;
+}
 LevelSeriesData::~LevelSeriesData() {
     delete &rawDataSeries;
     delete &levelSeries;
@@ -47,7 +73,7 @@ LevelSeriesData::~LevelSeriesData() {
 
 void LevelSeriesData::setRawDataSeriesWithLevelSeries(std::vector<int> rawDataSeries) {
     this->rawChannelSize = getSizeFromPolicy(rawDataSeries.size());
-
+    
 }
 
 /* 
@@ -97,4 +123,13 @@ int LevelSeriesData::getSizeFromPolicy(int size){
     int ans = 1 << counterPosition;
 
     return ans > DATA_MIN_SIZE ? (ans > DATA_MAX_SIZE ? DATA_MAX_SIZE : ans) : DATA_MIN_SIZE;
+}
+
+QStringList LevelSeriesData::getHeaderData() {
+    QStringList ret;
+
+    ret << "LIVE_TIME - " + QString::number(liveTime) << "REAL_TIME - " + QString::number(realTime)
+    << "DEAD_TIME - " + QString::number(deadTime) << "START_TIME - " + startTime.toString("dd/MM/yyyy hh:mm:ss");
+
+    return ret;
 }

@@ -7,6 +7,11 @@
 #include <vector>
 
 #include <QDebug>
+#include <QString>
+#include <QStringList>
+#include <QDateTime>
+#include <QDate>
+#include <QFile>
 
 class LevelSeriesData {
 /* 
@@ -35,6 +40,9 @@ public:
     LevelSeriesData(int channelSize);
     LevelSeriesData(std::vector<int> rawDataSeries);
     LevelSeriesData(int channelSize, std::vector<int> rawDataSeries);
+    LevelSeriesData(std::vector<int> rawDataSeries, double liveTime, double realTime, double deadTime, QDateTime startTime);
+    LevelSeriesData(std::vector<int> rawDataSeries, double liveTime, double realTime, QDateTime startTime);
+
     ~LevelSeriesData();
 
     void setRawDataSeriesWithLevelSeries(std::vector<int> rawDataSeries);
@@ -52,6 +60,8 @@ public:
     std::vector<int> getLevelSeries() {return this->levelSeries;}
     void setLevelSeries(std::vector<int> levelSeries) {this->levelSeries = levelSeries;}
 
+    QStringList getHeaderData();
+
 private:
     int channelSize;
     int rawChannelSize = 0;
@@ -63,6 +73,34 @@ private:
     void setLevelSeries();
     bool checkSizePolicy(int size);
     int getSizeFromPolicy(int size);
+
+    double liveTime = 0;
+    double realTime = 0;
+    double deadTime = 0;
+    QDateTime startTime;
+};
+
+class MCAFileStream {
+public:
+    MCAFileStream(QStringList dataList, QString fileType);
+    MCAFileStream(LevelSeriesData seriesData);
+    
+    void saveAsCSV(QString fileName);
+    void saveAsTXT(QString fileName);
+    void setData(std::vector<int> data) {this->data = data;}
+    LevelSeriesData getData() {return this->seriesData;}
+
+private:
+    QStringList dataList;
+    LevelSeriesData seriesData;
+    std::vector<int> data;
+
+    void parseData(QString parser);
+
+    double liveTime = 0;
+    double realTime = 0;
+    double deadTime;
+    QDateTime startTime;
 };
 
 #endif
