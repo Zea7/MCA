@@ -29,6 +29,8 @@
 #include <QLogValueAxis>
 #include <QBarSet>
 
+#include "types.h"
+
 // #include "dialogs.h"
 
 class SpectrumChart : public QChart {
@@ -37,6 +39,15 @@ class SpectrumChart : public QChart {
 public:
     SpectrumChart();
     ~SpectrumChart();
+
+public slots:
+    void selectROIRegion(int regionStartPoint, int regionEndPoint);
+    void deselectROIRegion(int regionStartPoint, int regionEndPoint);
+    void setChartWithLevelSeries(LevelSeriesData &levelSeries);
+
+    void resizeXAxis();
+    void resizeYAxis();
+    void resizeXYAxis();
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
@@ -61,9 +72,6 @@ private:
     int endSample = DEFAULT_CHANNEL_SIZE;
     int maxMagnitude = 1;
     int threshold = 0;
-
-    void selectROIRegion(int regionStartPoint, int regionEndPoint);
-    void deselectROIRegion(int regionStartPoint, int regionEndPoint);
 };
 
 class ROITabWidget : public QWidget {

@@ -55,10 +55,14 @@ private:
     SpectrumChart *previewChart;
     QChartView *previewChartView;
 
-    LevelSeriesData data;
+    LevelSeriesData *data;
 
 private:
+    void setSignalSlotConnection();
+
+private slots:
     void openMCAFile();
+
 };
 
 #endif

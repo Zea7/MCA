@@ -58,12 +58,27 @@ public:
     int getChannelSize() {return this->channelSize;}
     int getRawChannelSize() {return this->rawChannelSize;}
     std::vector<int> getLevelSeries() {return this->levelSeries;}
+    std::vector<int> getRawDataSeries() {return this->rawDataSeries;}
+    double getLiveTime() {return this->liveTime;}
+    double getDeadTime() {return this->deadTime;}
+    double getRealTime() {return this->realTime;}
+    QDateTime getStartTime() {return this->startTime;}
     void setLevelSeries(std::vector<int> levelSeries) {this->levelSeries = levelSeries;}
+    void deepcopy(LevelSeriesData *data) {
+        this->channelSize = data->getChannelSize();
+        this->rawChannelSize = data->getRawChannelSize();
+        this->rawDataSeries = data->getRawDataSeries();
+        this->levelSeries = data->getLevelSeries();
+        this->startTime = data->getStartTime();
+        this->liveTime = data->getLiveTime();
+        this->realTime = data->getRealTime();
+        this->deadTime = data->getDeadTime();
+    }
 
     QStringList getHeaderData();
 
 private:
-    int channelSize;
+    int channelSize = DATA_MIN_SIZE;
     int rawChannelSize = 0;
     std::vector<int> levelSeries;
     std::vector<int> rawDataSeries;
@@ -88,11 +103,11 @@ public:
     void saveAsCSV(QString fileName);
     void saveAsTXT(QString fileName);
     void setData(std::vector<int> data) {this->data = data;}
-    LevelSeriesData getData() {return this->seriesData;}
+    LevelSeriesData *getData() {return this->seriesData;}
 
 private:
     QStringList dataList;
-    LevelSeriesData seriesData;
+    LevelSeriesData *seriesData;
     std::vector<int> data;
 
     void parseData(QString parser);

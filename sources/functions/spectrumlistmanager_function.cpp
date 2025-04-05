@@ -1,5 +1,9 @@
 #include "dialogs.h"
 
+void SpectrumListManager::setSignalSlotConnection() {
+    QObject::connect(this->addSpectrumButton, &QPushButton::clicked, this, &SpectrumListManager::openMCAFile);
+}
+
 void SpectrumListManager::openMCAFile(){
     QString fileTypeFilter = "MCA file (*.mca *.txt *.csv) ;; All Files (*.*)";
     QString fileName = QFileDialog::getOpenFileName(this, "Open MCA Data File", QDir::currentPath(), fileTypeFilter);
@@ -25,11 +29,13 @@ void SpectrumListManager::openMCAFile(){
         dataList.append(data.trimmed());
     }
 
-    MCAFileStream openMCAFile(dataList, fileName.split(".")[1]);
+    MCAFileStream *openMCAFile = new MCAFileStream(dataList, fileName.split(".")[1]);
     
     dataFile.close();
 
-    this->data = openMCAFile.getData();
-    
+    this->data->deepcopy(openMCAFile->getData());
 
+    qDebug() << this->data->getLevelSeries();
+
+    this->previewChart->setChartWithLevelSeries(*this->data);
 }

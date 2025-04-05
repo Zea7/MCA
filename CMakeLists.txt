@@ -28,11 +28,14 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         includes/types.h
 
         sources/functions/mainwindow_function.cpp
+        sources/functions/spectrumchart_function.cpp
         sources/functions/roitabwidget_function.cpp
+        sources/functions/spectrumlistmanager_function.cpp
         sources/UI/mainwindow_ui.cpp
         sources/UI/spectrumchart_ui.cpp
         sources/UI/roitabwidget_ui.cpp
         sources/types/levelseriesdata.cpp
+        sources/types/mcafilestream.cpp
         sources/UI/spectrumlistmanager_ui.cpp
     )
 # Define target properties for Android with Qt 6 as:

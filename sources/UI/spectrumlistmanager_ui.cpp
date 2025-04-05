@@ -2,6 +2,7 @@
 
 SpectrumListManager::SpectrumListManager() {
     setUI();
+    setSignalSlotConnection();
 }
 
 SpectrumListManager::~SpectrumListManager() {
@@ -28,6 +29,8 @@ void SpectrumListManager::setUI() {
     this->mainLayout->addLayout(this->OKCancelLayout, 1);
 
     this->setLayout(this->mainLayout);  
+
+    this->data = new LevelSeriesData();
 }
 
 // StyleSheet로 좀 더 정확히 조정 필요할듯

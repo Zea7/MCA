@@ -47,6 +47,7 @@ LevelSeriesData::LevelSeriesData(std::vector<int> rawDataSeries, double liveTime
     }
 
     this->rawDataSeries = data;
+    this->setLevelSeries();
 }
 
 LevelSeriesData::LevelSeriesData(std::vector<int> rawDataSeries, double liveTime, double realTime, QDateTime startTime) :
@@ -61,6 +62,7 @@ LevelSeriesData::LevelSeriesData(std::vector<int> rawDataSeries, double liveTime
     }
 
     this->rawDataSeries = data;
+    this->setLevelSeries();
 }
 LevelSeriesData::~LevelSeriesData() {
     delete &rawDataSeries;
@@ -84,7 +86,7 @@ void LevelSeriesData::setLevelSeries(){
     assert(checkSizePolicy(this->channelSize) && checkSizePolicy(this->rawChannelSize));
 
     int channelSizeRate = rawChannelSize / channelSize;
-    if (channelSizeRate <= 1) {
+    if (channelSizeRate < 1) {
         qDebug() << "Error! Input channel size is larger than original data channel size.";
         return ;
     }

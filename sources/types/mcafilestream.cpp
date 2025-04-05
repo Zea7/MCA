@@ -5,7 +5,7 @@ MCAFileStream::MCAFileStream(QStringList dataList, QString fileType) : dataList(
     else if(fileType == "csv") parseData(",");
 }
 
-MCAFileStream::MCAFileStream(LevelSeriesData seriesData) : seriesData(seriesData) {
+MCAFileStream::MCAFileStream(LevelSeriesData seriesData) : seriesData(&seriesData) {
     this->data = seriesData.getLevelSeries();
 }
 
@@ -19,7 +19,7 @@ void MCAFileStream::parseData(QString parser) {
 
             qDebug() << head << tail;
             QStringList compare;
-            compare << "LIVE_TIME" << "REAL_TIME" << "START_TIME";
+            compare << "LIVE_TIME" << "REAL_TIME" << "START_TIME" << "DEAD_TIME";
 
             QString timeFormat = "dd/MM/yyyy HH:mm:ss";
             switch(compare.indexOf(head)) {
@@ -33,6 +33,10 @@ void MCAFileStream::parseData(QString parser) {
 
                 case 2:
                     this->startTime = QDateTime::fromString(tail, timeFormat);
+                    break;
+
+                case 3:
+                    this->deadTime = tail.toDouble();
                     break;
 
                 default:
@@ -51,6 +55,8 @@ void MCAFileStream::parseData(QString parser) {
     }
 
     if (liveTime && realTime) this->deadTime = realTime - liveTime;
+
+    this->seriesData = new LevelSeriesData(this->data, this->liveTime, this->realTime, this->startTime);
 
     qDebug() << deadTime;
     qDebug() << this->startTime;
