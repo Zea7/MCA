@@ -9,8 +9,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Gui Charts)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Gui Charts)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Gui Charts SerialPort)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Gui Charts SerialPort)
 
 set(PROJECT_SOURCES
         main.cpp
@@ -36,7 +36,12 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         sources/UI/roitabwidget_ui.cpp
         sources/types/levelseriesdata.cpp
         sources/types/mcafilestream.cpp
+        sources/types/uartstream.cpp
+        sources/types/portscanner.cpp
+        sources/types/uartworker.cpp
         sources/UI/spectrumlistmanager_ui.cpp
+
+        icons.qrc
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET MCA APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -56,7 +61,7 @@ else()
     endif()
 endif()
 
-target_link_libraries(MCA PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Charts Qt${QT_VERSION_MAJOR}::Gui)
+target_link_libraries(MCA PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Charts Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAGER}::SerialPort)
 target_include_directories(MCA PUBLIC includes)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

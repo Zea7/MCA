@@ -1,9 +1,11 @@
 #include "mainwindow.h"
+#include "types.h"
 
 MainWindow::MainWindow(){
     setMainUI();
 
     dialogTest();
+    setSignalSlotConnection();
 }
 
 void MainWindow::setMainUI(){

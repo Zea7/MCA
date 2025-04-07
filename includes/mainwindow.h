@@ -41,7 +41,11 @@
 #include <QAction>
 #include <QToolBar>
 
+#include <QFile>
+#include <QFileDialog>
+
 #include "widgets.h"
+#include "types.h"
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
@@ -67,7 +71,7 @@ private:
 
     void setMenuAndToolBar();
 
-    // void setSignalFromMenuBar();
+    void setSignalSlotConnection();
 
     // void setInfoTab(QStringList list);
     // // std::pair<double, double> getLinearFuncFromData(std::vector<std::pair<int, int>> points);
@@ -98,6 +102,7 @@ private:
     int maxMagnitude = 1;
     int threshold = 0;
 
+    int mainMCADataIndex = 0; // 저장되는 등 주로 활용될 MCA DATA Index
 
     /* 
         for test
@@ -114,7 +119,10 @@ private:
 
     // ToolBar *toolbar;
 
-    // MCAData *data;
+    // MCA Data vector
+    std::vector<LevelSeriesData*> mainMCAData;
+    std::vector<bool> activatedDataList; // MCA Data Vector에서 활성화되어 있는 리스트 위치
+    LevelSeriesData *liveMCAData;
 
     // ROI
     std::vector<std::pair<int, int>> roiRegions;
@@ -167,6 +175,7 @@ private:
     void dialogTest();
 
 signals:
+    void mcaDataListChanged(std::vector<bool> indexes);
     // void setSampleRange(int start, int end);
     // void setMaxMagnitude(int magnitude);
     // void resizeXAxis();
@@ -178,8 +187,8 @@ signals:
     // void sendGaussianDistributionData(std::vector<std::pair<double, double>> data);
 
 private slots:
-    // void openMCAFile();
-    // void saveMCAFile();
+    void openMCAFile();
+    void saveAsMCAFile();
     // void autoResizeXAxis();
     // void autoResizeYAxis();
     

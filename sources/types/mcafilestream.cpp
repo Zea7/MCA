@@ -5,8 +5,12 @@ MCAFileStream::MCAFileStream(QStringList dataList, QString fileType) : dataList(
     else if(fileType == "csv") parseData(",");
 }
 
-MCAFileStream::MCAFileStream(LevelSeriesData seriesData) : seriesData(&seriesData) {
-    this->data = seriesData.getLevelSeries();
+MCAFileStream::MCAFileStream(LevelSeriesData *seriesData) : seriesData(seriesData) {
+    this->data = seriesData->getRawDataSeries();
+    this->liveTime = seriesData->getLiveTime();
+    this->realTime = seriesData->getRealTime();
+    this->startTime = seriesData->getStartTime();
+    this->deadTime = seriesData->getDeadTime();
 }
 
 void MCAFileStream::parseData(QString parser) {
@@ -91,6 +95,8 @@ void MCAFileStream::saveAsTXT(QString fileName){
     QFile file;
     file.setFileName(fileName);
 
+    qDebug() << "Start File stream";
+
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text)){
 
     }
@@ -105,9 +111,10 @@ void MCAFileStream::saveAsTXT(QString fileName){
 
    
     out << header << "<<MCA DATA>>\n";
+    qDebug() << "Header End";
     for(int i : data){
         out << i << "\n";
     }
-
+    qDebug() << "Data end";
     file.close();
 }

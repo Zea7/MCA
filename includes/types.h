@@ -3,6 +3,8 @@
 
 #define DATA_MAX_SIZE 1<<16  // 65536
 #define DATA_MIN_SIZE 1<<10  // 1024
+#define DEFAULT_BAUD_RATE CBR_115200
+#define DEFAULT_CHANNEL 16384
 
 #include <vector>
 
@@ -12,6 +14,13 @@
 #include <QDateTime>
 #include <QDate>
 #include <QFile>
+
+#include <windows.h>
+#include <string>
+#include <cstring>
+#include <sstream>
+
+#include <QSerialPort>
 
 class LevelSeriesData {
 /* 
@@ -98,7 +107,7 @@ private:
 class MCAFileStream {
 public:
     MCAFileStream(QStringList dataList, QString fileType);
-    MCAFileStream(LevelSeriesData seriesData);
+    MCAFileStream(LevelSeriesData *seriesData);
     
     void saveAsCSV(QString fileName);
     void saveAsTXT(QString fileName);
@@ -116,6 +125,91 @@ private:
     double realTime = 0;
     double deadTime;
     QDateTime startTime;
+};
+
+class UARTStream {
+    HANDLE hSerial;
+    DCB dcbSerialParams;
+    COMMTIMEOUTS timeouts;
+
+    const std::string ACK = "ACK\n\r";
+
+    bool live;
+
+    QString FPGAVersion = "0";
+    QString FWV = "0";
+
+    std::string portName;
+
+public:
+    UARTStream(const std::string &portName);
+    ~UARTStream() {
+        if(hSerial != INVALID_HANDLE_VALUE){
+            CloseHandle(hSerial);
+        }
+    }
+
+    bool isLive() {return live;}
+
+    bool sendCommand(const std::string &cmd);
+    bool sendCommand(const std::string &cmd, const std::string &param1);
+    bool sendCommand(const std::string &cmd, const int &param1);
+    bool sendCommand(const std::string &cmd, const std::string &param1, const std::string &param2);
+
+    std::string getPortName() {return this->portName;}
+
+    std::string receiveResponse();
+
+private:
+    void setupSerialParams();
+    bool sendConstructedCommand(const std::string &command);
+    bool isMCADevice();
+};
+
+class PortScanner {
+protected:
+    std::vector<std::string> port;
+
+public:
+    PortScanner(){}
+
+    std::vector<std::string> getPort() {return port;}
+};
+
+class UARTScanner : public PortScanner {
+public:
+    UARTScanner();
+
+private:
+    void detectUARTDevice();
+};
+
+class UARTWorker : public QObject {
+    Q_OBJECT
+
+public:
+    UARTWorker(std::string &portName);
+    ~UARTWorker();
+
+    bool isRunning() {return running;}
+
+    std::string getPortName() {return this->portName;}
+
+public slots:
+    void start();
+    void stop();
+
+signals:
+    void receivedData(const QByteArray& data);
+
+private slots:
+    void readSerial();
+
+private:
+    QSerialPort *serial;
+    bool running = false;
+
+    std::string portName;
 };
 
 #endif
