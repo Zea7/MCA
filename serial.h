@@ -42,7 +42,8 @@ public:
     bool sendCommand(const std::string &cmd, const int &param1);
     bool sendCommand(const std::string &cmd, const std::string &param1, const std::string &param2);
 
-
+    std::string getPort() {return portName;}
+    void closeConnection() {if(hSerial != INVALID_HANDLE_VALUE) CloseHandle(hSerial);}
 
     std::string receiveResponse();
 
@@ -50,6 +51,8 @@ private:
     void setupSerialParams();
     bool sendConstructedCommand(const std::string &command);
     bool isUart();
+
+    std::string portName;
 };
 
 class UartDetector {

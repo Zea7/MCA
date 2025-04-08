@@ -1,6 +1,6 @@
 #include "serial.h"
 
-UartCommunicator::UartCommunicator(const std::string &portName){
+UartCommunicator::UartCommunicator(const std::string &portName) : portName(portName){
     hSerial = CreateFileA(portName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
     if (hSerial == INVALID_HANDLE_VALUE) {
@@ -153,7 +153,7 @@ bool UartCommunicator::isUart(){
 
                     qDebug() << response;
                 }
-                if(sendCommand("TRI", 33000)){
+                if(sendCommand("TRI", 33300)){
                     QString response = QString::fromUtf8(receiveResponse());
 
                     qDebug() << response;

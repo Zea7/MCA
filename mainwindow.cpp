@@ -359,35 +359,28 @@ void MainWindow::getSerialPort(QString port){
     cmd->show();
 
     this->detectThread = new DetectThread(this->uart);
+    
+    this->work = new QThread(this);
+    this->detectThread->moveToThread(this->work);
     QObject::connect(this->detectThread, &DetectThread::setData, this, &MainWindow::setMainChartData);
+    QObject::connect(this->work, &QThread::started, this->detectThread, &DetectThread::start);
+    QObject::connect(this, &QMainWindow::destroyed, [=]{
+        this->detectThread->stop();
+        this->work->quit();
+        this->work->wait();
+    });
 }
 
 void MainWindow::startDetection(){
-    this->detectThread->start();
+    this->work->start();
+    QMetaObject::invokeMethod(this->detectThread, "start", Qt::QueuedConnection);
 }
 
 void MainWindow::stopDetection(){
-    this->detectThread->stop();
+    QMetaObject::invokeMethod(this->detectThread, "stop", Qt::QueuedConnection);
 }
 
 void MainWindow::setMainChartData(std::vector<int> data){
-    qDebug() << "Before set data";
-    std::vector<int> setting(1024, 0);
-    int a = 0;
-    for(int i=0;i<1024;i++){
-        if(i<10){
-            setting[i] = 0;
-        }
-        else {
-            setting[i] = data[i];
-            a += data[i] - tempData[i];
-        }
-    }
-    getNum -= a;
-    if(getNum < 0) this->detectThread->stop();
-    qDebug() << "Remain " << getNum;
-    this->data->setData(setting);
-    this->tempData = setting;
-    this->mainChart->setData(setting);
-    qDebug()<<"Setting end";
+    this->data->setData(data);
+    this->mainChart->setData(data);
 }

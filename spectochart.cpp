@@ -88,12 +88,24 @@ void SpectoChart::addData(std::vector<int>& set){
 void SpectoChart::setData(std::vector<int> &set){
     QBarSet *newSet = new QBarSet("MCA DATA");
     for(int i=0;i<set.size();i++){    
+    for(int i=0;i<set.size();i++){    
         *newSet << set[i];
+        if(set[i] > maxMagnitude) maxMagnitude = set[i];
         if(set[i] > maxMagnitude) maxMagnitude = set[i];
     }
     newSet->setColor(colorVector[0]);
     newSet->setBorderColor(Qt::transparent);
     newSet->setSelectedColor(this->selectedColor);
+    if(ROIRegions.size()){
+        for(auto i:ROIRegions){
+            QList<int> idx;
+            for(int j=i.first;j<=i.second;j++){
+                idx << j;
+            }
+            newSet->toggleSelection(idx);
+        }
+    }
+    this->mainSeries->clear();
 
     if(ROIRegions.size()){
         for(auto i:ROIRegions){
@@ -107,6 +119,8 @@ void SpectoChart::setData(std::vector<int> &set){
     this->mainSeries->clear();
     this->mainSeries->append(newSet);
     this->setCounter++;
+    this->resizeXAxis();
+    this->resizeYAxis();
     this->resizeYAxis();
 
 }
