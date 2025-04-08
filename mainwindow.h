@@ -22,6 +22,7 @@
 #include <QStatusBar>
 
 #include <QCheckBox>
+#include <QThread>
 
 #include <QString>
 #include <QStringList>
@@ -129,6 +130,7 @@ private:
     UartCommunicator *uart;
 
     DetectThread *detectThread;
+    QThread *work;
 
 signals:
     void setSampleRange(int start, int end);
@@ -169,6 +171,8 @@ private slots:
     void stopDetection();
 
     void setMainChartData(std::vector<int> data);
+
+
 };
 
 #endif

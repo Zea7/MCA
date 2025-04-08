@@ -350,15 +350,25 @@ void MainWindow::getSerialPort(QString port){
     this->uart = new UartCommunicator(port.toStdString());
 
     this->detectThread = new DetectThread(this->uart);
+    
+    this->work = new QThread(this);
+    this->detectThread->moveToThread(this->work);
     QObject::connect(this->detectThread, &DetectThread::setData, this, &MainWindow::setMainChartData);
+    QObject::connect(this->work, &QThread::started, this->detectThread, &DetectThread::start);
+    QObject::connect(this, &QMainWindow::destroyed, [=]{
+        this->detectThread->stop();
+        this->work->quit();
+        this->work->wait();
+    });
 }
 
 void MainWindow::startDetection(){
-    this->detectThread->start();
+    this->work->start();
+    QMetaObject::invokeMethod(this->detectThread, "start", Qt::QueuedConnection);
 }
 
 void MainWindow::stopDetection(){
-    this->detectThread->stop();
+    QMetaObject::invokeMethod(this->detectThread, "stop", Qt::QueuedConnection);
 }
 
 void MainWindow::setMainChartData(std::vector<int> data){
