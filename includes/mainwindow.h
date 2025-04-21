@@ -123,6 +123,7 @@ private:
     std::vector<LevelSeriesData*> mainMCAData;
     std::vector<bool> activatedDataList; // MCA Data Vector에서 활성화되어 있는 리스트 위치
     LevelSeriesData *liveMCAData;
+    bool isLiveMeasuring = false;
 
     // ROI
     std::vector<std::pair<int, int>> roiRegions;
@@ -206,7 +207,8 @@ private slots:
     // void openAutoPeakDialog();
     // void doAutoPeakSearch(int start, int end, int left, int right);
 
-    // void getArgumentsToCalculateGaussian(int roiRegionIndex, int pointIndex);
+    // ROI Tab Widget
+    void calculateGaussianDistributionWithArguments(int roiRegionIndex, int pointIndex);
 
     // void getSerialPort(QString port);
 

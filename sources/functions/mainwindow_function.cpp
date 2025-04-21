@@ -14,6 +14,11 @@ void MainWindow::setSignalSlotConnection() {
     */
     QObject::connect(this->file_open, &QAction::triggered, this, &MainWindow::openMCAFile);
     QObject::connect(this->file_saveAs, &QAction::triggered, this, &MainWindow::saveAsMCAFile);
+
+    /* 
+        Signal Slot connection between Tab widgets and Window
+    */
+    QObject::connect(this->regionInformationTab, &ROITabWidget::sendArgumentsToCalculateGaussianDistribution, this, &MainWindow::calculateGaussianDistributionWithArguments);
 }
 
 void MainWindow::openMCAFile() {
@@ -65,4 +70,33 @@ void MainWindow::saveAsMCAFile() {
 
     if(fileName.split(".")[1] == "csv") saveFile->saveAsCSV(fileName);
     else if(fileName.split(".")[1] == "txt") saveFile->saveAsTXT(fileName);
+}
+
+void MainWindow::calculateGaussianDistributionWithArguments(int roiRegionIndex, int pointIndex) {
+    if(this->isLiveMeasuring) {
+        std::vector<int> recentData = this->liveMCAData->getLevelSeries();
+
+        std::pair<int, int> chosenROIRegion = roiRegions[roiRegionIndex];
+
+        int start = chosenROIRegion.first, end = chosenROIRegion.second;
+
+        std::vector<std::pair<int, int>> points;
+        
+        if(pointIndex == 0) { // counting points as 3
+            for(int i=-1;i<=1;i++){
+                points.push_back({start + i, recentData[start+i]});
+                points.push_back({end + i, recentData[end+i]});
+            }
+        } else if(pointIndex == 1){
+            for(int i=-2; i<=2; i++){
+                points.push_back({start + i, recentData[start+i]});
+                points.push_back({end + i, recentData[end+i]});
+            }
+        }
+
+        
+    } 
+    else {
+
+    }
 }

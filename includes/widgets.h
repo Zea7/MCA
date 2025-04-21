@@ -85,6 +85,7 @@ private:
     void setInformationFrameUI();
     void setChangeColorButtonUI();
     void setPointCountComboBoxUI();
+    void setSignalSlotConnection();
 
     QVBoxLayout *mainLayout;
     QComboBox *roiListComboBox;
@@ -110,8 +111,26 @@ private:
     QString estimatedFWHMString = QStringLiteral("Calculated FWHM : ");
     QString estimatedAreaSizeString = QStringLiteral("Calculated Area Size : ");
 
+    std::vector<std::pair<int, int>> roiRegions;
+
+
+signals:
+    void sendArgumentsToCalculateGaussianDistribution(int roiIndex, int pointsNumberIndex);
+    void openROIDialog();
+
+/* 
+    ROITabWidget Slot Functions
+
+    void getROIRegions(std::vector<std::pair<int, int>> roiRegions)
+    void setInformationFromDistributionData(std::vector<std::pair<double, double>> data)
+*/
+
 public slots:
     void getROIRegions(std::vector<std::pair<int, int>> roiRegions);
+    void setInformationFromDistributionData(std::vector<std::pair<double, double>> data);
+
+private slots:
+    void calculateGaussianDistributionWithSelectedROIRegion(int index);
 };
 
 #endif

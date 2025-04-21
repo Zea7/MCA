@@ -23,7 +23,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         includes/mainwindow.h
         includes/dialogs.h
         # includes/threads.h
-        # includes/utils.h
+        includes/utils.h
         includes/widgets.h
         includes/types.h
 
@@ -40,6 +40,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         sources/types/portscanner.cpp
         sources/types/uartworker.cpp
         sources/UI/spectrumlistmanager_ui.cpp
+        sources/utils.cpp
 
         icons.qrc
     )
