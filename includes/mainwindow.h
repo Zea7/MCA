@@ -185,7 +185,7 @@ signals:
     // void setROIRegion(std::vector<std::pair<int, int>> roiRegions);
     // void selectedROIRegionToShow(std::vector<std::pair<int, int>> roiRegions);
 
-    // void sendGaussianDistributionData(std::vector<std::pair<double, double>> data);
+    void sendGaussianDistributionData(std::vector<std::pair<double, double>> data);
 
 private slots:
     void openMCAFile();

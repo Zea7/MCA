@@ -1,8 +1,14 @@
 #include "mainwindow.h"
 #include "dialogs.h"
+#include "utils.h"
 
 void MainWindow::dialogTest() {
-    SpectrumListManager *dialog = new SpectrumListManager();
+    // SpectrumListManager *dialog = new SpectrumListManager();
+    // dialog->setModal(true);
+
+    // dialog->show();
+
+    ROIRegionManager *dialog = new ROIRegionManager();
     dialog->setModal(true);
 
     dialog->show();
@@ -19,6 +25,7 @@ void MainWindow::setSignalSlotConnection() {
         Signal Slot connection between Tab widgets and Window
     */
     QObject::connect(this->regionInformationTab, &ROITabWidget::sendArgumentsToCalculateGaussianDistribution, this, &MainWindow::calculateGaussianDistributionWithArguments);
+    QObject::connect(this, &MainWindow::sendGaussianDistributionData, this->regionInformationTab, &ROITabWidget::setInformationFromDistributionData);
 }
 
 void MainWindow::openMCAFile() {
@@ -73,30 +80,48 @@ void MainWindow::saveAsMCAFile() {
 }
 
 void MainWindow::calculateGaussianDistributionWithArguments(int roiRegionIndex, int pointIndex) {
-    if(this->isLiveMeasuring) {
-        std::vector<int> recentData = this->liveMCAData->getLevelSeries();
+    std::vector<int> recentData;
+    if(this->isLiveMeasuring) 
+        recentData = this->liveMCAData->getLevelSeries();
+    else
+        recentData = this->mainMCAData[mainMCADataIndex]->getLevelSeries();
 
-        std::pair<int, int> chosenROIRegion = roiRegions[roiRegionIndex];
+    std::pair<int, int> chosenROIRegion = roiRegions[roiRegionIndex];
 
-        int start = chosenROIRegion.first, end = chosenROIRegion.second;
+    int start = chosenROIRegion.first, end = chosenROIRegion.second;
 
-        std::vector<std::pair<int, int>> points;
-        
-        if(pointIndex == 0) { // counting points as 3
-            for(int i=-1;i<=1;i++){
-                points.push_back({start + i, recentData[start+i]});
-                points.push_back({end + i, recentData[end+i]});
-            }
-        } else if(pointIndex == 1){
-            for(int i=-2; i<=2; i++){
-                points.push_back({start + i, recentData[start+i]});
-                points.push_back({end + i, recentData[end+i]});
-            }
+    std::vector<std::pair<int, int>> points;
+    
+    if(pointIndex == 0) { // counting points as 3
+        for(int i=-1;i<=1;i++){
+            points.push_back({start + i, recentData[start+i]});
+            points.push_back({end + i, recentData[end+i]});
         }
-
-        
-    } 
-    else {
-
+    } else if(pointIndex == 1){
+        for(int i=-2; i<=2; i++){
+            points.push_back({start + i, recentData[start+i]});
+            points.push_back({end + i, recentData[end+i]});
+        }
     }
+
+    std::pair<double, double> lineData = getLinearFunctionUsingLSM<int>(points);
+    std::vector<double> normalizedData;
+    double value;
+    for(int i=start; i <= end;i++){
+        value = (double)recentData[i-start] - (lineData.first * i + lineData.second);
+
+        normalizedData.push_back(value);
+    }
+
+    std::pair<double, double> gaussianData = getGaussianDistributionUsingLSM<double>(normalizedData);
+
+    double rawAreaSize = (double)getAreaSize(recentData);
+    double areaSize = getAreaSize(normalizedData);
+
+    std::vector<std::pair<double, double>> dataPacket;
+    dataPacket.push_back(lineData);
+    dataPacket.push_back(gaussianData);
+    dataPacket.push_back({areaSize, rawAreaSize});
+
+    emit sendGaussianDistributionData(dataPacket);
 }
