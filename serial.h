@@ -6,12 +6,18 @@
 #include <cstring>
 #include <sstream>
 #include <QDebug>
+#include <vector>
+#include <ctime>
+#include <iostream>
 
 #include <QString>
+#include <QStringList>
 
 #define DEFAULT_BAUD_RATE CBR_115200
 #define DEFAULT_CHANNEL 16384
 
+const std::string PACKET_HEADER = "RISI";
+const size_t BINARY_PACKET_SIZE = 2;
 
 class UartCommunicator {
     HANDLE hSerial;
@@ -46,6 +52,8 @@ public:
     void closeConnection() {if(hSerial != INVALID_HANDLE_VALUE) CloseHandle(hSerial);}
 
     std::string receiveResponse();
+    std::string receiveUDP();
+    void parseBinary(const std::vector<uint8_t>& buffer);
 
 private:
     void setupSerialParams();

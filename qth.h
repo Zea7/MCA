@@ -9,6 +9,7 @@
 #include <vector>
 #include <QSerialPort>
 #include <QObject>
+#include <QElapsedTimer>
 
 #include "serial.h"
 

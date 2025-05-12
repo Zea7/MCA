@@ -62,7 +62,7 @@ bool UartCommunicator::sendCommand(const std::string &cmd, const std::string &pa
 }
 
 std::string UartCommunicator::receiveResponse() {
-    char buffer[256];
+    char buffer[1024];
     DWORD bytesRead;
     std::string response;
     bool go = false;
@@ -71,10 +71,53 @@ std::string UartCommunicator::receiveResponse() {
         if (!ReadFile(hSerial, buffer, sizeof(buffer), &bytesRead, NULL)){
             throw std::runtime_error("Error reading from serial port");
         }
-
         response.append(buffer, bytesRead);
         
     } while (bytesRead > 0);
+
+    auto it = std::search(response.begin(), response.end(), PACKET_HEADER.begin(), PACKET_HEADER.end());
+
+    std::vector<uint8_t> udp_buffer(it, response.end());
+    parseBinary(udp_buffer);
+
+    return response;
+}
+
+void UartCommunicator::parseBinary(const std::vector<uint8_t> &buffer){
+    for(size_t i = 0; i + BINARY_PACKET_SIZE <= buffer.size(); i+=BINARY_PACKET_SIZE){
+        std::string header (buffer.begin() + i, buffer.begin() + i + 4);
+        if(header=="RISI"){
+            uint16_t first = buffer[i+4] | buffer[i+5] << 8;
+            uint8_t second = buffer[i+6];
+            uint8_t third = buffer[i+7];
+            qDebug() << "First : " << first << " Second : " << second << " Third : " << third;
+            for(int j=0;j<first;j++){
+                uint16_t data = buffer[i+8+j*2] | buffer[i+7+j*2] << 8;
+                qDebug() << "Data : " << data;
+            }
+        }
+    }
+
+}
+
+std::string UartCommunicator::receiveUDP() {
+    char buffer[1024];
+    DWORD bytesRead;
+    std::string response;
+    bool go = false;
+
+    do {
+        if (!ReadFile(hSerial, buffer, sizeof(buffer), &bytesRead, NULL)){
+            throw std::runtime_error("Error reading from serial port");
+        }
+        response.append(buffer, bytesRead);
+        
+    } while (bytesRead > 0);
+    if(this->live) sendCommand("PD 500");
+    auto it = std::search(response.begin(), response.end(), PACKET_HEADER.begin(), PACKET_HEADER.end());
+
+    std::vector<uint8_t> udp_buffer(it, response.end());
+    parseBinary(udp_buffer);
 
     return response;
 }
@@ -133,41 +176,55 @@ bool UartCommunicator::sendConstructedCommand(const std::string &command){
 }
 
 bool UartCommunicator::isUart(){
+    // return true;
     try{
-        if(testCommand()){
-            QString response = QString::fromUtf8(receiveResponse());
+        // if(testCommand()){
+        //     QString response = QString::fromUtf8(receiveResponse());
 
-            qDebug() << response;
-        }
-        if(sendCommand("ID")){
-            QString response = QString::fromUtf8(receiveResponse());
+        //     qDebug() << response;
+        // }
+        // if(sendCommand("ID")){
+        //     QString response = QString::fromUtf8(receiveResponse());
 
-            qDebug() << response;
-            if(sendCommand("FWV")){
-                QString response = QString::fromUtf8(receiveResponse());
+        //     qDebug() << response;
+        //     if(sendCommand("FWV")){
+        //         QString response = QString::fromUtf8(receiveResponse());
 
+        //         qDebug() << response;
+
+                // if(sendCommand("FPV")){
+                //     QString response = QString::fromUtf8(receiveResponse());
+
+                //     qDebug() << response;
+                // }
+                // if(sendCommand("TRI", 33300)){
+                //     QString response = QString::fromUtf8(receiveResponse());
+
+                //     qDebug() << response;
+                // }
+
+                // if(sendCommand("Status")){
+                //     QString response = QString::fromUtf8(receiveResponse());
+
+                //     qDebug() << response;
+                // }
+        if(sendCommand("PD 500")){
+            for(int i=0; i<16;i++){
+                clock_t start = clock();
+                QString response = QString::fromUtf8(receiveUDP());
+            
                 qDebug() << response;
-
-                if(sendCommand("FPV")){
-                    QString response = QString::fromUtf8(receiveResponse());
-
-                    qDebug() << response;
-                }
-                if(sendCommand("TRI", 33300)){
-                    QString response = QString::fromUtf8(receiveResponse());
-
-                    qDebug() << response;
-                }
-
-                if(sendCommand("Status")){
-                    QString response = QString::fromUtf8(receiveResponse());
-
-                    qDebug() << response;
-                }
+                clock_t end = clock();
             }
-            return true;
+        }   
+
+        this->live = false;
+        return true;
+
+        //     }
+        //     return true;
         
-        }
+        // }
         this->live = false;
         qDebug() << "Is not UART";
         return false;
@@ -176,4 +233,5 @@ bool UartCommunicator::isUart(){
         qDebug() << "Is not UART";
         return false;
     }
+
 }

@@ -354,12 +354,12 @@ void MainWindow::getSerialPort(QString port){
     this->port = port;
     this->uart = new UartCommunicator(port.toStdString());
 
-    
-    TempDialog *cmd  = new TempDialog(this->uart);
-    cmd->show();
+    qDebug() << "1";
 
     this->detectThread = new DetectThread(this->uart);
     
+    qDebug() << "2";
+
     this->work = new QThread(this);
     this->detectThread->moveToThread(this->work);
     QObject::connect(this->detectThread, &DetectThread::setData, this, &MainWindow::setMainChartData);

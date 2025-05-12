@@ -88,7 +88,6 @@ void SpectoChart::addData(std::vector<int>& set){
 void SpectoChart::setData(std::vector<int> &set){
     QBarSet *newSet = new QBarSet("MCA DATA");
     for(int i=0;i<set.size();i++){    
-    for(int i=0;i<set.size();i++){    
         *newSet << set[i];
         if(set[i] > maxMagnitude) maxMagnitude = set[i];
         if(set[i] > maxMagnitude) maxMagnitude = set[i];
@@ -126,7 +125,7 @@ void SpectoChart::setData(std::vector<int> &set){
 }
 
 void SpectoChart::mousePressEvent(QGraphicsSceneMouseEvent *event){
-    
+    return ;
 }
 
 void SpectoChart::selectROIRegion(int start, int end){
