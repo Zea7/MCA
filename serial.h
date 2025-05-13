@@ -53,7 +53,8 @@ public:
 
     std::string receiveResponse();
     std::string receiveUDP();
-    void parseBinary(const std::vector<uint8_t>& buffer);
+    QString parsedResponse();
+    std::vector<int> parseBinary(const std::vector<uint8_t>& buffer);
 
 private:
     void setupSerialParams();
