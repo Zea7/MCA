@@ -13,7 +13,7 @@ GUI 툴입니다.
 ## Made with   
 ---   
 - C++17 ![C++17](https://img.shields.io/badge/C%2B%2B17-0D33B3)   
-- Qt 6.8.X for Windows ![Qt](https://img.shields.io/badge/Qt-6.8.X-46AB48)   
+- Qt 6.6.X for Windows ![Qt](https://img.shields.io/badge/Qt-6.6.X-46AB48)   
 
 ## Authors   
 ---   

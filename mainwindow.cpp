@@ -352,11 +352,10 @@ void MainWindow::getArgumentsToCalculateGaussian(int roiRegionIndex, int pointIn
 
 void MainWindow::getSerialPort(QString port){
     this->port = port;
-    this->uart = new UartCommunicator(port.toStdString());
 
     qDebug() << "1";
 
-    this->detectThread = new DetectThread(this->uart);
+    this->detectThread = new DetectThread(this->port);
     
     qDebug() << "2";
 
@@ -373,11 +372,12 @@ void MainWindow::getSerialPort(QString port){
 
 void MainWindow::startDetection(){
     this->work->start();
-    QMetaObject::invokeMethod(this->detectThread, "start", Qt::QueuedConnection);
 }
 
 void MainWindow::stopDetection(){
-    QMetaObject::invokeMethod(this->detectThread, "stop", Qt::QueuedConnection);
+    this->detectThread->stop();
+    this->work->quit();
+    this->work->wait();
 }
 
 void MainWindow::setMainChartData(std::vector<int> data){

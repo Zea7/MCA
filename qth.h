@@ -17,7 +17,7 @@ class DetectThread : public QObject {
     Q_OBJECT
 
 public:
-    explicit DetectThread(UartCommunicator *uart);
+    explicit DetectThread(QString port);
     ~DetectThread(){stop();}
 
 public slots:
@@ -32,7 +32,8 @@ private:
     int data[DATA_MAX_SIZE] = {0};
     std::string portName;
     QStringList responseList;
-    QSerialPort *serial;
+    UartCommunicator *uart;
+    int spectrumCounter = 500;
 
 signals:
     void setData(std::vector<int> data);

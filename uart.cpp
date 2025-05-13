@@ -62,7 +62,8 @@ bool UartCommunicator::sendCommand(const std::string &cmd, const std::string &pa
 }
 
 std::string UartCommunicator::receiveResponse() {
-    char buffer[1024];
+    char buffer[256];
+    clock_t start = clock();
     DWORD bytesRead;
     std::string response;
     bool go = false;
@@ -74,16 +75,14 @@ std::string UartCommunicator::receiveResponse() {
         response.append(buffer, bytesRead);
         
     } while (bytesRead > 0);
+    qDebug() << "Elapsed Time : " << ((float)clock() - start)/CLOCKS_PER_SEC;
 
-    auto it = std::search(response.begin(), response.end(), PACKET_HEADER.begin(), PACKET_HEADER.end());
-
-    std::vector<uint8_t> udp_buffer(it, response.end());
-    parseBinary(udp_buffer);
 
     return response;
 }
 
-void UartCommunicator::parseBinary(const std::vector<uint8_t> &buffer){
+std::vector<int> UartCommunicator::parseBinary(const std::vector<uint8_t> &buffer){
+    std::vector<int> retVector;
     for(size_t i = 0; i + BINARY_PACKET_SIZE <= buffer.size(); i+=BINARY_PACKET_SIZE){
         std::string header (buffer.begin() + i, buffer.begin() + i + 4);
         if(header=="RISI"){
@@ -93,15 +92,19 @@ void UartCommunicator::parseBinary(const std::vector<uint8_t> &buffer){
             qDebug() << "First : " << first << " Second : " << second << " Third : " << third;
             for(int j=0;j<first;j++){
                 uint16_t data = buffer[i+8+j*2] | buffer[i+7+j*2] << 8;
-                qDebug() << "Data : " << data;
+                retVector.push_back((int)data);
+                // qDebug() << "Data : " << data;
             }
         }
     }
 
+    return retVector;
+
 }
 
 std::string UartCommunicator::receiveUDP() {
-    char buffer[1024];
+    clock_t start = clock();
+    char buffer[256];
     DWORD bytesRead;
     std::string response;
     bool go = false;
@@ -113,7 +116,8 @@ std::string UartCommunicator::receiveUDP() {
         response.append(buffer, bytesRead);
         
     } while (bytesRead > 0);
-    if(this->live) sendCommand("PD 500");
+    clock_t end = clock();
+    qDebug() << ((float)end-start)/CLOCKS_PER_SEC;
     auto it = std::search(response.begin(), response.end(), PACKET_HEADER.begin(), PACKET_HEADER.end());
 
     std::vector<uint8_t> udp_buffer(it, response.end());
@@ -149,9 +153,9 @@ void UartCommunicator::setupSerialParams() {
     }
 
     timeouts = { 0 };
-    timeouts.ReadIntervalTimeout = 50;
-    timeouts.ReadTotalTimeoutConstant = 50;
-    timeouts.ReadTotalTimeoutMultiplier = 10;
+    timeouts.ReadIntervalTimeout = 5;
+    timeouts.ReadTotalTimeoutConstant = 10;
+    timeouts.ReadTotalTimeoutMultiplier = 1;
     timeouts.WriteTotalTimeoutConstant = 50;
     timeouts.WriteTotalTimeoutMultiplier = 10;
 
@@ -173,6 +177,21 @@ bool UartCommunicator::sendConstructedCommand(const std::string &command){
 
     return true;
     
+}
+
+QString UartCommunicator::parsedResponse(){
+    std::string response = this->receiveResponse();
+    auto it = std::search(response.begin(), response.end(), PACKET_HEADER.begin(), PACKET_HEADER.end());
+
+    std::vector<uint8_t> udp_buffer(it, response.end());
+    std::vector<int> data = parseBinary(udp_buffer);
+
+    QString ret = "";
+    for(int i=0; i<data.size();i++){
+        ret += QString::number(i) + " " + QString::number(data[i]) + "\n\r ";
+    }
+    qDebug() << ret;
+    return ret;
 }
 
 bool UartCommunicator::isUart(){
@@ -208,14 +227,12 @@ bool UartCommunicator::isUart(){
 
                 //     qDebug() << response;
                 // }
-        if(sendCommand("PD 500")){
-            for(int i=0; i<16;i++){
-                clock_t start = clock();
-                QString response = QString::fromUtf8(receiveUDP());
-            
-                qDebug() << response;
-                clock_t end = clock();
-            }
+        if(sendCommand("PD 8000")){
+            clock_t start = clock();
+            std::string response = receiveUDP();
+            qDebug() << response;
+            // qDebug() << response;
+            clock_t end = clock();
         }   
 
         this->live = false;

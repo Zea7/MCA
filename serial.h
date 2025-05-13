@@ -1,6 +1,8 @@
 #ifndef SERIAL_H
 #define SERIAL_H
 
+#pragma comment (lib, "Setupapi.lib")
+
 #include <windows.h>
 #include <string>
 #include <cstring>
@@ -9,6 +11,7 @@
 #include <vector>
 #include <ctime>
 #include <iostream>
+#include <setupapi.h>
 
 #include <QString>
 #include <QStringList>
@@ -53,7 +56,8 @@ public:
 
     std::string receiveResponse();
     std::string receiveUDP();
-    void parseBinary(const std::vector<uint8_t>& buffer);
+    QString parsedResponse();
+    std::vector<int> parseBinary(const std::vector<uint8_t>& buffer);
 
 private:
     void setupSerialParams();
@@ -83,27 +87,32 @@ private:
         }
 
         for (const auto& port : ports){
-            HANDLE hComm = CreateFileA(port.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+            GUID guid = GUID_DEVINTERFACE_COMPORT;
+            HDEVINFO hDevInfo = SetupDiGetClassDevs(&guid, NULL, NULL, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
 
-            if (hComm != INVALID_HANDLE_VALUE) {
-                DCB dcbSerialParams = {0};
-                dcbSerialParams.DCBlength = sizeof(dcbSerialParams);
+            if (hDevInfo == INVALID_HANDLE_VALUE) {
+                std::cerr << "SetupDiGetClassDevs failed." << std::endl;
+            }
 
-                if(GetCommState(hComm, &dcbSerialParams)) {
-                    dcbSerialParams.BaudRate = DEFAULT_BAUD_RATE;
-                    dcbSerialParams.ByteSize = 8;
-                    dcbSerialParams.StopBits = ONESTOPBIT;
-                    dcbSerialParams.Parity = NOPARITY;
+            SP_DEVINFO_DATA devInfoData;
+            devInfoData.cbSize = sizeof(SP_DEVINFO_DATA);
 
-                    if (SetCommState(hComm, &dcbSerialParams)) {
-                        CloseHandle(hComm);
-                        qDebug() << port;
+            for (DWORD i = 0; SetupDiEnumDeviceInfo(hDevInfo, i, &devInfoData); ++i) {
+                char friendlyName[256];
+                if (SetupDiGetDeviceRegistryPropertyA(
+                        hDevInfo, &devInfoData, SPDRP_FRIENDLYNAME,
+                        NULL, (PBYTE)friendlyName, sizeof(friendlyName), NULL)) {
+
+                    std::string name(friendlyName);
+                    // Friendly Name 예시: "USB Serial Device (COM3)"
+                    if (name.find(port) != std::string::npos) {
+                        qDebug() << "Port: " << port;
+                        qDebug() << "Friendly Name: " << name;
                         ans.push_back(port);
                     }
                 }
-
-                CloseHandle(hComm);
             }
+
         }
         return ans;
     }
