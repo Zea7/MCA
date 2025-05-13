@@ -1,6 +1,6 @@
 #include "types.h"
 
-UARTStream::UARTStream(const std::string &portName) : portName(portName){
+SerialStream::SerialStream(const std::string &portName) : portName(portName){
     hSerial = CreateFileA(portName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
     if (hSerial == INVALID_HANDLE_VALUE) {
@@ -11,7 +11,7 @@ UARTStream::UARTStream(const std::string &portName) : portName(portName){
     isMCADevice();
 }
 
-bool UARTStream::sendCommand(const std::string &cmd){
+bool SerialStream::sendCommand(const std::string &cmd){
     std::stringstream ss;
 
     ss << "$" << cmd << "\n\r";
@@ -21,7 +21,7 @@ bool UARTStream::sendCommand(const std::string &cmd){
     return sendConstructedCommand(fullCmd);
 }
 
-bool UARTStream::sendCommand(const std::string &cmd, const int &param1){
+bool SerialStream::sendCommand(const std::string &cmd, const int &param1){
     std::stringstream ss;
 
     ss << "$" << cmd << " " << param1 << "\n\r";
@@ -31,7 +31,7 @@ bool UARTStream::sendCommand(const std::string &cmd, const int &param1){
     return sendConstructedCommand(fullCmd);
 }
 
-bool UARTStream::sendCommand(const std::string &cmd, const std::string &param1){
+bool SerialStream::sendCommand(const std::string &cmd, const std::string &param1){
     std::stringstream ss;
 
     ss << "$" << cmd << " " << param1 << "\n\r";
@@ -41,7 +41,7 @@ bool UARTStream::sendCommand(const std::string &cmd, const std::string &param1){
     return sendConstructedCommand(fullCmd);
 }
 
-bool UARTStream::sendCommand(const std::string &cmd, const std::string &param1, const std::string &param2){
+bool SerialStream::sendCommand(const std::string &cmd, const std::string &param1, const std::string &param2){
     std::stringstream ss;
 
     ss << "$" << cmd << " " << param1 << " " << param2 << "\n\r";
@@ -51,7 +51,7 @@ bool UARTStream::sendCommand(const std::string &cmd, const std::string &param1, 
     return sendConstructedCommand(fullCmd);
 }
 
-std::string UARTStream::receiveResponse() {
+std::string SerialStream::receiveResponse() {
     char buffer[256];
     DWORD bytesRead;
     std::string response;
@@ -69,7 +69,7 @@ std::string UARTStream::receiveResponse() {
     return response;
 }
 
-void UARTStream::setupSerialParams(){
+void SerialStream::setupSerialParams(){
     dcbSerialParams = {0};
     dcbSerialParams.DCBlength = sizeof(dcbSerialParams);
 
@@ -103,7 +103,7 @@ void UARTStream::setupSerialParams(){
     live = true;
 }
 
-bool UARTStream::sendConstructedCommand(const std::string &command) {
+bool SerialStream::sendConstructedCommand(const std::string &command) {
     DWORD bytesWritten;
     
     if(!WriteFile(hSerial, command.c_str(), command.length(), &bytesWritten, NULL)){
@@ -114,7 +114,7 @@ bool UARTStream::sendConstructedCommand(const std::string &command) {
     return true;
 }
 
-bool UARTStream::isMCADevice() {
+bool SerialStream::isMCADevice() {
     try{
         if(sendCommand("ID")){
             QString response = QString::fromUtf8(receiveResponse());

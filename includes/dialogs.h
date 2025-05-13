@@ -137,4 +137,40 @@ private slots:
 
 };
 
+class SerialManager : public QDialog {
+    Q_OBJECT
+
+public:
+    SerialManager();
+    ~SerialManager();
+
+private:
+    void setUI();
+    void setOKCancelLayoutUI();
+    void setSerialSettingLayoutUI();
+    void setExperimentalSettingLayoutUI();
+
+    QGridLayout *mainLayout;
+
+    QComboBox *serialTypeSettingComboBox;
+    QComboBox *channelSizeSettingComboBox;
+    QComboBox *serialPortSettingComboBox;
+    QLineEdit *baudRateInput;
+    QLineEdit *realTimeInput;
+    QPushButton *backgroundSubstractFileSelectButton;
+    QPushButton *OKButton;
+    QPushButton *cancelButton;
+
+    QGridLayout *serialSettingLayout;
+    QGridLayout *experimentalSettingLayout;
+    QHBoxLayout *OKCancelLayout;
+
+    std::string portName;
+    int baudRate;
+
+private:
+    void setSignalSlotConnection();
+    std::vector<std::string> getSerialPorts();
+};
+
 #endif

@@ -14,7 +14,7 @@ ROIRegionManager::ROIRegionManager(std::vector<std::pair<int, int>> roiRegions){
 
 void ROIRegionManager::setUI() {
     this->setWindowTitle("ROI Regions Manager Dialog");
-    this->resize(300, 250);
+    this->resize(360, 300);
 
     this->mainLayout = new QVBoxLayout();
     this->ROIManageLayout = new QGridLayout();
@@ -43,6 +43,8 @@ void ROIRegionManager::setShowROIListTableUI() {
     this->showROIListTable->setHorizontalHeaderLabels(list);
     this->showROIListTable->setColumnCount(2);
     this->showROIListTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+    setShowROIListTable();
 }
 
 void ROIRegionManager::setROIManageLayoutUI() {    
