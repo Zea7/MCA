@@ -22,7 +22,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_SOURCES}
         includes/mainwindow.h
         includes/dialogs.h
-        # includes/threads.h
+        includes/threads.h
         includes/utils.h
         includes/widgets.h
         includes/types.h
@@ -32,15 +32,17 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         sources/functions/roitabwidget_function.cpp
         sources/functions/spectrumlistmanager_function.cpp
         sources/functions/roiregionmanager_function.cpp
+        sources/functions/serialmanager_function.cpp
         sources/UI/mainwindow_ui.cpp
         sources/UI/spectrumchart_ui.cpp
         sources/UI/roitabwidget_ui.cpp
         sources/UI/roiregionmanager_ui.cpp
+        sources/UI/serialmanager_ui.cpp
         sources/types/levelseriesdata.cpp
         sources/types/mcafilestream.cpp
-        sources/types/uartstream.cpp
+        sources/types/serialstream.cpp
         sources/types/portscanner.cpp
-        sources/types/uartworker.cpp
+        sources/types/serialworker.cpp
         sources/UI/spectrumlistmanager_ui.cpp
         sources/utils.cpp
 

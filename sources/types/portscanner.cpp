@@ -1,10 +1,10 @@
 #include "types.h"
 
-UARTScanner::UARTScanner() {
-    detectUARTDevice();
+MCUScanner::MCUScanner() {
+    detectMCUDevice();
 }
 
-void UARTScanner::detectUARTDevice() {
+void MCUScanner::detectMCUDevice() {
     std::vector<std::string> ports;
     char targetPath[256];
     /* 

@@ -170,7 +170,11 @@ private:
     QAction *help_help;
 
     QToolBar *toolBar;
-
+    QAction *toolbar_open;
+    QAction *toolbar_save;
+    QAction *toolbar_resizeHorizontalAxis;
+    QAction *toolbar_resizeVerticalAxis;
+    
 // private sections for main functions
 private:
     void dialogTest();

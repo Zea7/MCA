@@ -155,5 +155,18 @@ void MainWindow::setMenuAndToolBar() {
     // Setup Tool Bar
     this->toolBar = new QToolBar();
 
+    this->toolBar->setFloatable(false);
+    this->toolBar->setMovable(false);
+    
+    this->toolbar_open = new QAction(QIcon(":/icons/open-folder.png"), "Open");
+    this->toolbar_save = new QAction(QIcon(":/icons/save.png"), "Save");
+    this->toolbar_resizeHorizontalAxis = new QAction(QIcon(":/icons/resize-horizontal.png"), "Auto Resize Horizontal");
+    this->toolbar_resizeVerticalAxis = new QAction(QIcon(":/icons/resize-vertical.png"), "Auto Resize Vertical");
+
+    this->toolBar->addAction(this->toolbar_open);
+    this->toolBar->addAction(this->toolbar_save);
+    this->toolBar->addAction(this->toolbar_resizeHorizontalAxis);
+    this->toolBar->addAction(this->toolbar_resizeVerticalAxis);
+
     this->addToolBar(this->toolBar);
 }

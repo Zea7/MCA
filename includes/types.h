@@ -20,8 +20,6 @@
 #include <cstring>
 #include <sstream>
 
-#include <QSerialPort>
-
 class LevelSeriesData {
 /* 
     MCA 프로그램의 기본적인 데이터를 다루는 클래스.
@@ -29,7 +27,7 @@ class LevelSeriesData {
     데이터 관련 기능들을 갖추는 클래스
 
     모든 데이터의 입력은 raw data로 받으며,
-    해당 rqw data를 원하는 채널 수에 맞추어 가공을 거친 뒤
+    해당 raw data를 원하는 채널 수에 맞추어 가공을 거친 뒤
     보여주는 방식으로 진행.
 
     * Params *
@@ -127,7 +125,7 @@ private:
     QDateTime startTime;
 };
 
-class UARTStream {
+class SerialStream {
     HANDLE hSerial;
     DCB dcbSerialParams;
     COMMTIMEOUTS timeouts;
@@ -142,8 +140,8 @@ class UARTStream {
     std::string portName;
 
 public:
-    UARTStream(const std::string &portName);
-    ~UARTStream() {
+    SerialStream(const std::string &portName);
+    ~SerialStream() {
         if(hSerial != INVALID_HANDLE_VALUE){
             CloseHandle(hSerial);
         }
@@ -176,40 +174,12 @@ public:
     std::vector<std::string> getPort() {return port;}
 };
 
-class UARTScanner : public PortScanner {
+class MCUScanner : public PortScanner {
 public:
-    UARTScanner();
+    MCUScanner();
 
 private:
-    void detectUARTDevice();
-};
-
-class UARTWorker : public QObject {
-    Q_OBJECT
-
-public:
-    UARTWorker(std::string &portName);
-    ~UARTWorker();
-
-    bool isRunning() {return running;}
-
-    std::string getPortName() {return this->portName;}
-
-public slots:
-    void start();
-    void stop();
-
-signals:
-    void receivedData(const QByteArray& data);
-
-private slots:
-    void readSerial();
-
-private:
-    QSerialPort *serial;
-    bool running = false;
-
-    std::string portName;
+    void detectMCUDevice();
 };
 
 #endif

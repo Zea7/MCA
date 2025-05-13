@@ -8,7 +8,12 @@ void MainWindow::dialogTest() {
 
     // dialog->show();
 
-    ROIRegionManager *dialog = new ROIRegionManager();
+    // ROIRegionManager *dialog = new ROIRegionManager();
+    // dialog->setModal(true);
+
+    // dialog->show();
+
+    SerialManager *dialog = new SerialManager();
     dialog->setModal(true);
 
     dialog->show();
