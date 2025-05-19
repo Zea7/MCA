@@ -166,11 +166,21 @@ private:
     QHBoxLayout *OKCancelLayout;
 
     std::string portName;
+    std::vector<std::string> enablePorts;
     int baudRate;
+    int realTime = 0;
+    QString backgroundSubstractFilePath = "";
+
+signals:
+    void sendSerialSetter(SerialSetter setter);
 
 private:
     void setSignalSlotConnection();
     std::vector<std::string> getSerialPorts();
+
+private slots:
+    void okSignal();
+    void chooseBackgroundSubstractFile();
 };
 
 #endif

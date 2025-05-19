@@ -17,6 +17,8 @@ void MainWindow::dialogTest() {
     dialog->setModal(true);
 
     dialog->show();
+
+    QObject::connect(dialog, &SerialManager::sendSerialSetter, this, &MainWindow::getSerialSetter);
 }
 
 void MainWindow::setSignalSlotConnection() {
@@ -129,4 +131,8 @@ void MainWindow::calculateGaussianDistributionWithArguments(int roiRegionIndex, 
     dataPacket.push_back({areaSize, rawAreaSize});
 
     emit sendGaussianDistributionData(dataPacket);
+}
+
+void MainWindow::getSerialSetter(SerialSetter setter){
+
 }

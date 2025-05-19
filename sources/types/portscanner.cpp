@@ -1,54 +1,59 @@
 #include "types.h"
 
-MCUScanner::MCUScanner() {
-    detectMCUDevice();
+MCAScanner::MCAScanner() {
+    detectMCADevice();
 }
 
-void MCUScanner::detectMCUDevice() {
+void MCAScanner::detectMCADevice() {
     std::vector<std::string> ports;
     char targetPath[256];
     /* 
         연결 가능한 Window Port만 골라 UART인지 확인
     */
     for (int i=1; i<=256; i++){
-        std::string windowPort = "COM" + std::to_string(i); // Window가 가질 수 있는 외부 통신 port의 종류. COM1 ~ COM256까지 존재한다.
-        HANDLE hComm = CreateFileA(windowPort.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+        std::string port = "COM" + std::to_string(i);
+        HANDLE hComm = CreateFileA(port.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
 
         if(hComm != INVALID_HANDLE_VALUE) {
-            /* 
-                검증이 필요한 코드
-            */
-            if(QueryDosDeviceA(windowPort.c_str(), targetPath, sizeof(targetPath))){
-                qDebug () << targetPath;
-
-                QString path(targetPath);
-                if (path.contains("UART")) ports.push_back(windowPort);
-            }
+            ports.push_back(port);
             CloseHandle(hComm);
         }
 
 
     }
-
+    std::vector<std::pair<std::string, std::string>> ans;
     for (const auto& portName : ports){
-        HANDLE hComm = CreateFileA(portName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+        GUID guid = GUID_DEVINTERFACE_COMPORT;
+        HDEVINFO hDevInfo = SetupDiGetClassDevs(&guid, NULL, NULL, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
 
-        if (hComm != INVALID_HANDLE_VALUE){
-            DCB dcbSerialParams = {0};
-            dcbSerialParams.DCBlength = sizeof(dcbSerialParams);
+        if (hDevInfo == INVALID_HANDLE_VALUE) {
+            
+        }
 
-            if(GetCommState(hComm, &dcbSerialParams)) {
-                dcbSerialParams.BaudRate = DEFAULT_BAUD_RATE;
-                dcbSerialParams.ByteSize = 8;
-                dcbSerialParams.StopBits = ONESTOPBIT;
-                dcbSerialParams.Parity = NOPARITY;
+        SP_DEVINFO_DATA devInfoData;
+        devInfoData.cbSize = sizeof(SP_DEVINFO_DATA);
 
-                if (SetCommState(hComm, &dcbSerialParams)) {
-                    CloseHandle(hComm);
-                    qDebug() << portName;
-                    this->port.push_back(portName);
+        for (DWORD i = 0; SetupDiEnumDeviceInfo(hDevInfo, i, &devInfoData); ++i) {
+            char friendlyName[256];
+            if (SetupDiGetDeviceRegistryPropertyA(
+                    hDevInfo, &devInfoData, SPDRP_FRIENDLYNAME,
+                    NULL, (PBYTE)friendlyName, sizeof(friendlyName), NULL)) {
+
+                std::string name(friendlyName);
+                // Friendly Name 예시: "USB Serial Device (COM3)"
+                if (name.find(portName) != std::string::npos) {
+                    qDebug() << "Port: " << portName;
+                    qDebug() << "Friendly Name: " << name;
+                    if(name.find("USB") != std::string::npos)
+                        ans.push_back({portName, "USB"});
+                    else if(name.find("UART") != std::string::npos)
+                        ans.push_back({portName, "UART"});
+                    else
+                        ans.push_back({portName, "Unknown"});
                 }
             }
         }
     }
+
+    this->enablePorts = ans;
 }

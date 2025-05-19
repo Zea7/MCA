@@ -214,7 +214,7 @@ private slots:
     // ROI Tab Widget
     void calculateGaussianDistributionWithArguments(int roiRegionIndex, int pointIndex);
 
-    // void getSerialPort(QString port);
+    void getSerialSetter(SerialSetter setter);
 
     // void startDetection();
     // void stopDetection();

@@ -2,6 +2,7 @@
 
 SerialManager::SerialManager() {
     setUI();
+    setSignalSlotConnection();
 }
 
 SerialManager::~SerialManager() {

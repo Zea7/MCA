@@ -16,9 +16,17 @@
 #include <QFile>
 
 #include <windows.h>
+#include <setupapi.h>
 #include <string>
 #include <cstring>
 #include <sstream>
+
+struct SerialSetter {
+    std::string portName;
+    int baudRate;
+    int realTime;
+    QString backgroundSubstractFilePath;
+};
 
 class LevelSeriesData {
 /* 
@@ -164,6 +172,8 @@ private:
     bool isMCADevice();
 };
 
+#pragma comment (lib, "Setupapi.lib")
+
 class PortScanner {
 protected:
     std::vector<std::string> port;
@@ -174,12 +184,15 @@ public:
     std::vector<std::string> getPort() {return port;}
 };
 
-class MCUScanner : public PortScanner {
+class MCAScanner : public PortScanner {
 public:
-    MCUScanner();
+    MCAScanner();
+
+    std::vector<std::pair<std::string, std::string>> getEnablePortsAndType(){return enablePorts;}
 
 private:
-    void detectMCUDevice();
+    std::vector<std::pair<std::string, std::string>> enablePorts;
+    void detectMCADevice(); // <COM Port, Device Type>
 };
 
 #endif

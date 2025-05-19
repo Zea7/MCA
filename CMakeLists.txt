@@ -66,7 +66,7 @@ else()
     endif()
 endif()
 
-target_link_libraries(MCA PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Charts Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAGER}::SerialPort)
+target_link_libraries(MCA PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Charts Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAGER}::SerialPort setupapi)
 target_include_directories(MCA PUBLIC includes)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
