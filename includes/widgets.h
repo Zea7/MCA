@@ -43,7 +43,7 @@ public:
 public slots:
     void selectROIRegion(int regionStartPoint, int regionEndPoint);
     void deselectROIRegion(int regionStartPoint, int regionEndPoint);
-    void setChartWithLevelSeries(LevelSeriesData &levelSeries);
+    void setChartWithLevelSeries(LevelSeriesData *levelSeries);
 
     void resizeXAxis();
     void resizeYAxis();

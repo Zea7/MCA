@@ -30,7 +30,9 @@ void SerialManager::okSignal() {
         this->realTime = this->realTimeInput->text().toInt();
     }
 
-    SerialSetter setter = {this->portName, this->baudRate, this->realTime, this->backgroundSubstractFilePath};
+    this->channelSize = this->channelSizeSettingComboBox->currentText().toInt();
+
+    SerialSetter setter = {this->portName, this->baudRate, this->realTime, this->channelSize, this->backgroundSubstractFilePath};
 
     emit sendSerialSetter(setter);
 }

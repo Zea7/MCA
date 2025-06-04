@@ -51,14 +51,14 @@ void SpectrumChart::deselectROIRegion(int regionStartPoint, int regionEndPoint) 
     // To Be specified
 }
 
-void SpectrumChart::setChartWithLevelSeries(LevelSeriesData &levelSeries){
+void SpectrumChart::setChartWithLevelSeries(LevelSeriesData *levelSeries){
     QBarSet *newSet = new QBarSet("MCA DATA");
 
-    std::vector<int> data = levelSeries.getLevelSeries();
+    std::vector<int> data = levelSeries->getLevelSeries();
 
-    this->endSample = levelSeries.getChannelSize();
+    this->endSample = levelSeries->getChannelSize();
 
-    for(int i=0;i<levelSeries.getChannelSize();i++){
+    for(int i=0;i<levelSeries->getChannelSize();i++){
         *newSet << data[i];
 
         if(data[i] > maxMagnitude) maxMagnitude = data[i];

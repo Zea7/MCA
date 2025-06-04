@@ -169,6 +169,7 @@ private:
     std::vector<std::string> enablePorts;
     int baudRate;
     int realTime = 0;
+    int channelSize;
     QString backgroundSubstractFilePath = "";
 
 signals:

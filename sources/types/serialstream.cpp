@@ -91,7 +91,7 @@ void SerialStream::setupSerialParams(){
     timeouts = { 0 };
     timeouts.ReadIntervalTimeout = 50;
     timeouts.ReadTotalTimeoutConstant = 50;
-    timeouts.ReadTotalTimeoutMultiplier = 10;
+    timeouts.ReadTotalTimeoutMultiplier = DEFAULT_BUFFER_READ_TIME_MULTIPLIER;
     timeouts.WriteTotalTimeoutConstant = 50;
     timeouts.WriteTotalTimeoutMultiplier = 10;
 
@@ -114,6 +114,27 @@ bool SerialStream::sendConstructedCommand(const std::string &command) {
     return true;
 }
 
+std::vector<int> SerialStream::parseDWORDData(const std::vector<uint8_t> &buffer){
+    std::vector<int> parsedData;
+
+    for(size_t i=0; i + CDC_PACKET_SIZE <= buffer.size(); i += CDC_PACKET_SIZE){
+        std::string headerChecker (buffer.begin() + i, buffer.begin() + i + CDC_PACKET_SIZE * 2);
+
+        if(headerChecker == CDC_PACKET_HEADER) {
+            uint16_t dataLength = buffer[i+4] | buffer[i+5] << 8;
+            uint8_t checker = buffer[i+6];
+            uint8_t packetOrder = buffer[i+7];
+
+            for(int j=0; j < dataLength; j++){
+                uint16_t data = buffer[i+8+j*2] | buffer[i+7+j*2] << 8;
+                parsedData.push_back((int)data);
+            }
+        }
+    }
+
+    return parsedData;
+}
+
 bool SerialStream::isMCADevice() {
     try{
         if(sendCommand("ID")){
@@ -130,7 +151,7 @@ bool SerialStream::isMCADevice() {
 
                     qDebug() << response;
                 }
-                if(sendCommand("TRI", 33300)){
+                if(sendCommand("TRI", DEFAULT_TRIGGER_VALUE)){
                     QString response = QString::fromUtf8(receiveResponse());
 
                     qDebug() << response;

@@ -67,6 +67,8 @@ void MainWindow::openMCAFile() {
     LevelSeriesData *mcaData = new LevelSeriesData();
     mcaData->deepcopy(openMCAFile->getData());
 
+    this->mainChart->setChartWithLevelSeries(mcaData);
+
     this->mainMCAData.push_back(mcaData);
 
     qDebug() << "Check";

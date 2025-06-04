@@ -1,10 +1,17 @@
 #ifndef TYPES_H
 #define TYPES_H
 
-#define DATA_MAX_SIZE 1<<16  // 65536
+#define DATA_MAX_SIZE 1<<15  // 32768
 #define DATA_MIN_SIZE 1<<10  // 1024
 #define DEFAULT_BAUD_RATE CBR_115200
 #define DEFAULT_CHANNEL 16384
+
+#define DEFAULT_BUFFER_READ_TIME_MULTIPLIER 1
+
+#define CDC_PACKET_SIZE 2
+#define CDC_PACKET_HEADER "RISI"
+
+#define DEFAULT_TRIGGER_VALUE 33300
 
 #include <vector>
 
@@ -25,6 +32,7 @@ struct SerialSetter {
     std::string portName;
     int baudRate;
     int realTime;
+    int channelSize;
     QString backgroundSubstractFilePath;
 };
 
@@ -165,11 +173,13 @@ public:
     std::string getPortName() {return this->portName;}
 
     std::string receiveResponse();
+    LevelSeriesData* parseReceivedResponseIntoLevelSeriesData();
 
 private:
     void setupSerialParams();
     bool sendConstructedCommand(const std::string &command);
     bool isMCADevice();
+    std::vector<int> parseDWORDData(const std::vector<uint8_t> &buffer);
 };
 
 #pragma comment (lib, "Setupapi.lib")

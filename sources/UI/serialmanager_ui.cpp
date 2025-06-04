@@ -67,7 +67,9 @@ void SerialManager::setExperimentalSettingLayoutUI() {
     this->backgroundSubstractFileSelectButton = new QPushButton("Choose File");
 
     QStringList channelSizeList;
-    channelSizeList << "1024" << "2048" << "4096" << "8192" << "16384" << "32768";
+    for(int i=DATA_MIN_SIZE; i<=DATA_MAX_SIZE; i*=2){
+        channelSizeList << QString::number(i);
+    }
 
     for(auto item : channelSizeList) {
         this->channelSizeSettingComboBox->addItem(item);

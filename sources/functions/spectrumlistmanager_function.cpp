@@ -37,5 +37,5 @@ void SpectrumListManager::openMCAFile(){
 
     qDebug() << this->data->getLevelSeries();
 
-    this->previewChart->setChartWithLevelSeries(*this->data);
+    this->previewChart->setChartWithLevelSeries(this->data);
 }
