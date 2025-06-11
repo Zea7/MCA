@@ -30,6 +30,7 @@ class SpectrumListManager : public QDialog {
 
 public:
     SpectrumListManager();
+    SpectrumListManager(std::vector<std::shared_ptr<LevelSeriesData>>& datas);
     ~SpectrumListManager();
 
 private:
@@ -45,6 +46,7 @@ private:
     void setOKCancelLayoutUI();
     void setChartPreviewUI();
     void setSpectrumListLayoutUI();
+    void setSpectrumListComboBoxUI();
 
     QVBoxLayout *mainLayout;
 
@@ -63,7 +65,8 @@ private:
     SpectrumChart *previewChart;
     QChartView *previewChartView;
 
-    LevelSeriesData *data;
+    LevelSeriesData *showingData;
+    std::vector<std::shared_ptr<LevelSeriesData>> datas;
 
 private:
     void setSignalSlotConnection();

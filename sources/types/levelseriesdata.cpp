@@ -65,8 +65,8 @@ LevelSeriesData::LevelSeriesData(std::vector<int> rawDataSeries, double liveTime
     this->setLevelSeries();
 }
 LevelSeriesData::~LevelSeriesData() {
-    delete &rawDataSeries;
-    delete &levelSeries;
+    // delete &rawDataSeries;
+    // delete &levelSeries;
 }
 
 /* 

@@ -1,11 +1,40 @@
 #include "types.h"
 
+MCAFileStream::MCAFileStream(QString fileName) {
+    QStringList dataList;
+    qDebug() << fileName;
+    QFile dataFile(fileName);
+
+    if(!dataFile.open(QFile::ReadOnly | QFile::Text)){
+        if(!dataFile.exists()){
+            qDebug() << "File Open Error!\n File Does Not Exists.";
+        } else {
+            qDebug() << "File Open Error!\n Unknown Error occured.";
+        }
+        return ;
+    }
+
+    QTextStream openFile(&dataFile);
+    QString data;
+
+    while(!openFile.atEnd()) {
+        data = openFile.readLine();
+        dataList.append(data.trimmed());
+    }
+
+    QString fileType = fileName.split(".")[1];
+
+    this->dataList = dataList;
+    if(fileType == "txt" || fileType == "mca") parseData("-");
+    else if(fileType == "csv") parseData(",");
+}
+
 MCAFileStream::MCAFileStream(QStringList dataList, QString fileType) : dataList(dataList){
     if(fileType == "txt" || fileType == "mca") parseData("-");
     else if(fileType == "csv") parseData(",");
 }
 
-MCAFileStream::MCAFileStream(LevelSeriesData *seriesData) : seriesData(seriesData) {
+MCAFileStream::MCAFileStream(std::shared_ptr<LevelSeriesData> seriesData) : seriesData(seriesData) {
     this->data = seriesData->getRawDataSeries();
     this->liveTime = seriesData->getLiveTime();
     this->realTime = seriesData->getRealTime();
@@ -59,8 +88,8 @@ void MCAFileStream::parseData(QString parser) {
     }
 
     if (liveTime && realTime) this->deadTime = realTime - liveTime;
-
-    this->seriesData = new LevelSeriesData(this->data, this->liveTime, this->realTime, this->startTime);
+    
+    this->seriesData = std::make_shared<LevelSeriesData>(this->data, this->liveTime, this->realTime, this->startTime);
 
     qDebug() << deadTime;
     qDebug() << this->startTime;

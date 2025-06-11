@@ -46,6 +46,10 @@
 
 #include "widgets.h"
 #include "types.h"
+#include "dialogs.h"
+#include "utils.h"
+
+
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
@@ -120,9 +124,10 @@ private:
     // ToolBar *toolbar;
 
     // MCA Data vector
-    std::vector<LevelSeriesData*> mainMCAData;
+    std::vector<std::shared_ptr<LevelSeriesData>> mainMCAData;
     std::vector<bool> activatedDataList; // MCA Data Vector에서 활성화되어 있는 리스트 위치
     LevelSeriesData *liveMCAData;
+    std::shared_ptr<LevelSeriesData> dataCarrier;
     bool isLiveMeasuring = false;
 
     // ROI
@@ -218,7 +223,9 @@ private slots:
 
     // void startDetection();
     // void stopDetection();
-
+    
+    // Dialogs
+    void showSpectrumListManager();
     // void setMainChartData(std::vector<int> data);
 };
 

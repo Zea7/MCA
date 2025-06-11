@@ -8,34 +8,36 @@ void SpectrumListManager::openMCAFile(){
     QString fileTypeFilter = "MCA file (*.mca *.txt *.csv) ;; All Files (*.*)";
     QString fileName = QFileDialog::getOpenFileName(this, "Open MCA Data File", QDir::currentPath(), fileTypeFilter);
 
-    QStringList dataList;
-    qDebug() << fileName;
-    QFile dataFile(fileName);
+    // QStringList dataList;
+    // qDebug() << fileName;
+    // QFile dataFile(fileName);
 
-    if(!dataFile.open(QFile::ReadOnly | QFile::Text)){
-        if(!dataFile.exists()){
-            qDebug() << "File Open Error!\n File Does Not Exists.";
-        } else {
-            qDebug() << "File Open Error!\n Unknown Error occured.";
-        }
-        return ;
-    }
+    // if(!dataFile.open(QFile::ReadOnly | QFile::Text)){
+    //     if(!dataFile.exists()){
+    //         qDebug() << "File Open Error!\n File Does Not Exists.";
+    //     } else {
+    //         qDebug() << "File Open Error!\n Unknown Error occured.";
+    //     }
+    //     return ;
+    // }
 
-    QTextStream openFile(&dataFile);
-    QString data;
+    // QTextStream openFile(&dataFile);
+    // QString data;
 
-    while(!openFile.atEnd()) {
-        data = openFile.readLine();
-        dataList.append(data.trimmed());
-    }
+    // while(!openFile.atEnd()) {
+    //     data = openFile.readLine();
+    //     dataList.append(data.trimmed());
+    // }
 
-    MCAFileStream *openMCAFile = new MCAFileStream(dataList, fileName.split(".")[1]);
+    // MCAFileStream *openMCAFile = new MCAFileStream(dataList, fileName.split(".")[1]);
     
-    dataFile.close();
+    // dataFile.close();
 
-    this->data->deepcopy(openMCAFile->getData());
+    MCAFileStream *openMCAFile = new MCAFileStream(fileName);
 
-    qDebug() << this->data->getLevelSeries();
+    this->showingData->deepcopy(openMCAFile->getData());
 
-    this->previewChart->setChartWithLevelSeries(this->data);
+    qDebug() << this->showingData->getLevelSeries();
+
+    this->previewChart->setChartWithLevelSeries(this->showingData);
 }

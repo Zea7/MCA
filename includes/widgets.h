@@ -30,7 +30,7 @@
 #include <QBarSet>
 
 #include "types.h"
-
+#include "utils.h"
 // #include "dialogs.h"
 
 class SpectrumChart : public QChart {
@@ -43,7 +43,9 @@ public:
 public slots:
     void selectROIRegion(int regionStartPoint, int regionEndPoint);
     void deselectROIRegion(int regionStartPoint, int regionEndPoint);
-    void setChartWithLevelSeries(LevelSeriesData *levelSeries);
+    void setChartWithLevelSeries(std::shared_ptr<LevelSeriesData> levelSeries);
+    void setChartWithLevelSeries(LevelSeriesData* levelSeries);
+    void setChartWithLevelSeries(const std::vector<int>& rawData);
 
     void resizeXAxis();
     void resizeYAxis();

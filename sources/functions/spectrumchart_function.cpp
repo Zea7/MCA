@@ -51,10 +51,13 @@ void SpectrumChart::deselectROIRegion(int regionStartPoint, int regionEndPoint) 
     // To Be specified
 }
 
-void SpectrumChart::setChartWithLevelSeries(LevelSeriesData *levelSeries){
+void SpectrumChart::setChartWithLevelSeries(LevelSeriesData* levelSeries) {
     QBarSet *newSet = new QBarSet("MCA DATA");
 
-    std::vector<int> data = levelSeries->getLevelSeries();
+    std::vector<int> rawData = levelSeries->getLevelSeries();
+    std::vector<double> data(rawData.begin(), rawData.end());
+
+    data = smoothHistogramGaussian(data, 1.0);
 
     this->endSample = levelSeries->getChannelSize();
 
@@ -81,4 +84,75 @@ void SpectrumChart::setChartWithLevelSeries(LevelSeriesData *levelSeries){
     this->seriesCounter++;
 
     this->resizeXYAxis();
+}
+
+void SpectrumChart::setChartWithLevelSeries(std::shared_ptr<LevelSeriesData> levelSeries){
+    QBarSet *newSet = new QBarSet("MCA DATA");
+
+    std::vector<int> rawData = levelSeries->getLevelSeries();
+    std::vector<double> data(rawData.begin(), rawData.end());
+
+    data = smoothHistogramGaussian(data, 1.0);
+
+    this->endSample = levelSeries->getChannelSize();
+
+    for(int i=0;i<levelSeries->getChannelSize();i++){
+        *newSet << data[i];
+
+        if(data[i] > maxMagnitude) maxMagnitude = data[i];
+    }
+
+    newSet->setColor(chartColorVector[0]);
+    newSet->setBorderColor(Qt::transparent);
+    newSet->setSelectedColor(this->roiRegionDefaultColor);
+    if(roiRegions.size()){
+        for(auto i:roiRegions){
+            QList<int> idx;
+            for(int j=i.first;j<=i.second;j++){
+                idx << j;
+            }
+            newSet->toggleSelection(idx);
+        }
+    }
+    this->mainSeries->clear();
+    this->mainSeries->append(newSet);
+    this->seriesCounter++;
+
+    this->resizeXYAxis();
+}
+
+void SpectrumChart::setChartWithLevelSeries(const std::vector<int>& rawData){
+    QBarSet *newSet = new QBarSet("MCA DATA");
+    qDebug() << "Start";
+    std::vector<double> data(rawData.begin(), rawData.end());
+
+    data = smoothHistogramGaussian(data, 1.0);
+    // this->endSample = data.size();
+    qDebug() << "1";
+
+    for(int i=0;i<data.size();i++){
+        *newSet << data[i];
+
+        if(data[i] > maxMagnitude) maxMagnitude = data[i];
+    }
+    qDebug() << "2";
+    newSet->setColor(chartColorVector[0]);
+    newSet->setBorderColor(Qt::transparent);
+    newSet->setSelectedColor(this->roiRegionDefaultColor);
+    if(roiRegions.size()){
+        for(auto i:roiRegions){
+            QList<int> idx;
+            for(int j=i.first;j<=i.second;j++){
+                idx << j;
+            }
+            newSet->toggleSelection(idx);
+        }
+    }
+    qDebug() << "3";
+    this->mainSeries->clear();
+    this->mainSeries->append(newSet);
+    this->seriesCounter++;
+
+    this->resizeXYAxis();
+    qDebug() << "End";
 }

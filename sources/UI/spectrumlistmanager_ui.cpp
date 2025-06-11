@@ -5,6 +5,14 @@ SpectrumListManager::SpectrumListManager() {
     setSignalSlotConnection();
 }
 
+SpectrumListManager::SpectrumListManager(std::vector<std::shared_ptr<LevelSeriesData>>& datas) : datas(datas){
+    qDebug() << "1";
+    qDebug() << "Size : " << this->datas.size();
+    qDebug() << this->datas[0]->getChannelSize();
+    setUI();
+    setSignalSlotConnection();
+}
+
 SpectrumListManager::~SpectrumListManager() {
 
 }
@@ -30,7 +38,7 @@ void SpectrumListManager::setUI() {
 
     this->setLayout(this->mainLayout);  
 
-    this->data = new LevelSeriesData();
+    this->showingData = new LevelSeriesData();
 }
 
 // StyleSheet로 좀 더 정확히 조정 필요할듯
@@ -64,6 +72,8 @@ void SpectrumListManager::setSpectrumListLayoutUI() {
     this->previewChart = new SpectrumChart();
     this->previewChartView = new QChartView(this->previewChart);
     this->spectrumListLayout->addWidget(this->previewChartView, 8);
+
+    setSpectrumListComboBoxUI();
 }
 
 void SpectrumListManager::setOKCancelLayoutUI() {
@@ -74,4 +84,15 @@ void SpectrumListManager::setOKCancelLayoutUI() {
 
     this->OKCancelLayout->addWidget(this->OKButton);
     this->OKCancelLayout->addWidget(this->cancelButton);
+}
+
+void SpectrumListManager::setSpectrumListComboBoxUI() {
+    if (this->datas.size() > 0){
+        for (int i = 0; i< this->datas.size(); i++){
+            this->spectrumListComboBox->addItem("Spectrum " + QString::number(i));
+        }
+        qDebug() << "Before";
+        this->previewChart->setChartWithLevelSeries(this->datas[0]);
+        qDebug() << "After";
+    }
 }

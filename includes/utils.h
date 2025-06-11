@@ -6,6 +6,10 @@
 #include <limits>
 #include <stdexcept>
 #include <numeric>
+#include <complex>
+#include <algorithm>
+
+using Complex = std::complex<double>;
 
 /* 
     Template function definition
@@ -35,11 +39,6 @@ std::pair<double, double> getLinearFunctionUsingLSM(std::vector<std::pair<T, T>>
     b = (x2sum * ysum - xsum * xysum) / (x2sum * n - xsum * xsum);
 
     return std::make_pair(a, b);
-}
-
-double getGaussianValue(double x, double mean, double sigma, double amplitude) {
-    double exponent = -0.5 * std::pow((x - mean) / sigma, 2);
-    return amplitude * std::exp(exponent);
 }
 
 template <typename T>
@@ -76,27 +75,10 @@ double computeStandardDeviationFromData(const std::vector<T>& data, double mean)
 }
 
 template <>
-double computeMeanFromData(const std::vector<double>& data){
-    double total_hist = std::accumulate(data.begin(), data.end(), 0.0);
-    double expect = 0;
-
-    for(int i=0; i < data.size(); i++){
-        expect += data[i] * (i + 0.5);
-    }
-    return expect / total_hist;
-}
+double computeMeanFromData(const std::vector<double>& data);
 
 template <>
-double computeStandardDeviationFromData(const std::vector<double>& data, double mean){
-    double sum = 0.0;
-    double total_hist = std::accumulate(data.begin(), data.end(), 0.0);
-
-    for(int i=0; i < data.size(); i++){
-        sum += data[i] * (i - mean) * (i - mean);
-    }
-
-    return std::sqrt(sum / total_hist);
-}
+double computeStandardDeviationFromData(const std::vector<double>& data, double mean);
 
 template <typename T>
 std::pair<double, double> getGaussianDistributionUsingLSM(const std::vector<T>& data){
@@ -132,8 +114,25 @@ T getAreaSize_hidden(const std::vector<T> &data) {
     return sum;
 }
 
-int getAreaSize(const std::vector<int> &data){return getAreaSize_hidden<int>(data);}
-double getAreaSize(const std::vector<double> &data){return getAreaSize_hidden<double>(data);}
-long long getAreaSize(const std::vector<long long> &data){return getAreaSize_hidden<long long>(data);}
+inline int getAreaSize(const std::vector<int> &data){return getAreaSize_hidden<int>(data);}
+inline double getAreaSize(const std::vector<double> &data){return getAreaSize_hidden<double>(data);}
+inline long long getAreaSize(const std::vector<long long> &data){return getAreaSize_hidden<long long>(data);}
+inline double getGaussianValue(double x, double mean, double sigma, double amplitude) {
+    double exponent = -0.5 * std::pow((x - mean) / sigma, 2);
+    return amplitude * std::exp(exponent);
+}
+
+
+// Smoothing Methods
+/* 
+    void fft(...)   :   
+    void applyLowPassFilter(...)    :   
+    std::vector<double> smoothHistogramFFt(...) :   
+*/
+void fft(std::vector<Complex>& input, bool inverse);
+void applyLowPassFilter(std::vector<Complex>& input, int cutoff);
+std::vector<double> smoothHistogramFFT(const std::vector<double>& input, int cutoff);
+std::vector<double> smoothHistogramMedian(const std::vector<double>& input, int windowSize);
+std::vector<double> smoothHistogramGaussian(const std::vector<double>& input, double sigma);
 
 #endif

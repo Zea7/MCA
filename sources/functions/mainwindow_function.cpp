@@ -1,6 +1,4 @@
 #include "mainwindow.h"
-#include "dialogs.h"
-#include "utils.h"
 
 void MainWindow::dialogTest() {
     // SpectrumListManager *dialog = new SpectrumListManager();
@@ -28,11 +26,27 @@ void MainWindow::setSignalSlotConnection() {
     QObject::connect(this->file_open, &QAction::triggered, this, &MainWindow::openMCAFile);
     QObject::connect(this->file_saveAs, &QAction::triggered, this, &MainWindow::saveAsMCAFile);
 
+    QObject::connect(this->view_spectraList, &QAction::triggered, this, &MainWindow::showSpectrumListManager);
+
+    /* 
+        Signal Slot Connection between ToolBar and Window 
+    */
+    QObject::connect(this->toolbar_open, &QAction::triggered, this, &MainWindow::openMCAFile);
+    QObject::connect(this->toolbar_save, &QAction::triggered, this, &MainWindow::saveAsMCAFile);
+
     /* 
         Signal Slot connection between Tab widgets and Window
     */
     QObject::connect(this->regionInformationTab, &ROITabWidget::sendArgumentsToCalculateGaussianDistribution, this, &MainWindow::calculateGaussianDistributionWithArguments);
     QObject::connect(this, &MainWindow::sendGaussianDistributionData, this->regionInformationTab, &ROITabWidget::setInformationFromDistributionData);
+}
+
+void MainWindow::showSpectrumListManager() {
+    qDebug() << this->mainMCAData[0]->getLevelSeries();
+    SpectrumListManager *dialog = new SpectrumListManager(this->mainMCAData);
+    dialog->setModal(true);
+
+    dialog->show();
 }
 
 void MainWindow::openMCAFile() {
@@ -64,12 +78,12 @@ void MainWindow::openMCAFile() {
     
     dataFile.close();
 
-    LevelSeriesData *mcaData = new LevelSeriesData();
-    mcaData->deepcopy(openMCAFile->getData());
+    this->dataCarrier = std::make_shared<LevelSeriesData>();
+    this->dataCarrier->deepcopy(openMCAFile->getData());
 
-    this->mainChart->setChartWithLevelSeries(mcaData);
+    this->mainChart->setChartWithLevelSeries(this->dataCarrier);
 
-    this->mainMCAData.push_back(mcaData);
+    this->mainMCAData.push_back(this->dataCarrier);
 
     qDebug() << "Check";
     qDebug() << this->mainMCAData[0]->getLevelSeries();

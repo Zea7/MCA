@@ -80,14 +80,14 @@ public:
     void setChannelSize(int channelSize) {this->channelSize = channelSize;}
     int getChannelSize() {return this->channelSize;}
     int getRawChannelSize() {return this->rawChannelSize;}
-    std::vector<int> getLevelSeries() {return this->levelSeries;}
-    std::vector<int> getRawDataSeries() {return this->rawDataSeries;}
+    std::vector<int>& getLevelSeries() {return this->levelSeries;}
+    std::vector<int>& getRawDataSeries() {return this->rawDataSeries;}
     double getLiveTime() {return this->liveTime;}
     double getDeadTime() {return this->deadTime;}
     double getRealTime() {return this->realTime;}
     QDateTime getStartTime() {return this->startTime;}
     void setLevelSeries(std::vector<int> levelSeries) {this->levelSeries = levelSeries;}
-    void deepcopy(LevelSeriesData *data) {
+    void deepcopy(std::shared_ptr<LevelSeriesData> data) {
         this->channelSize = data->getChannelSize();
         this->rawChannelSize = data->getRawChannelSize();
         this->rawDataSeries = data->getRawDataSeries();
@@ -120,17 +120,18 @@ private:
 
 class MCAFileStream {
 public:
+    MCAFileStream(QString fileName);
     MCAFileStream(QStringList dataList, QString fileType);
-    MCAFileStream(LevelSeriesData *seriesData);
+    MCAFileStream(std::shared_ptr<LevelSeriesData> seriesData);
     
     void saveAsCSV(QString fileName);
     void saveAsTXT(QString fileName);
     void setData(std::vector<int> data) {this->data = data;}
-    LevelSeriesData *getData() {return this->seriesData;}
+    std::shared_ptr<LevelSeriesData> getData() {return this->seriesData;}
 
 private:
     QStringList dataList;
-    LevelSeriesData *seriesData;
+    std::shared_ptr<LevelSeriesData> seriesData;
     std::vector<int> data;
 
     void parseData(QString parser);
