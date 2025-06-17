@@ -97,7 +97,7 @@ private:
     ROITabWidget *regionInformationTab;
 
     SpectrumChart *mainChart;
-    QChartView *mainChartView;
+    SpectrumChartView *mainChartView;
     QValueAxis *axisX;
     QValueAxis *axisY;
 

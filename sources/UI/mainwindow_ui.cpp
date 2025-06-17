@@ -42,7 +42,7 @@ void MainWindow::setMainUI(){
 
 void MainWindow::setMainChartUI() {
     this->mainChart = new SpectrumChart();
-    this->mainChartView = new QChartView(this->mainChart);
+    this->mainChartView = new SpectrumChartView(this->mainChart);
 }
 
 void MainWindow::setSidePannelUI() {

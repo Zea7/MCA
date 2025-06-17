@@ -44,6 +44,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         sources/types/portscanner.cpp
         sources/types/serialworker.cpp
         sources/UI/spectrumlistmanager_ui.cpp
+        sources/UI/spectrumchartview_ui.cpp
         sources/utils.cpp
 
         icons.qrc

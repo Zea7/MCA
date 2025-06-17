@@ -29,9 +29,14 @@
 #include <QLogValueAxis>
 #include <QBarSet>
 
+#include <QChartView>
+#include <QMouseEvent>
+#include <QGraphicsLineItem>
+
 #include "types.h"
 #include "utils.h"
 // #include "dialogs.h"
+
 
 class SpectrumChart : public QChart {
     Q_OBJECT
@@ -39,6 +44,8 @@ class SpectrumChart : public QChart {
 public:
     SpectrumChart();
     ~SpectrumChart();
+
+    void loggingData(int index){if(mainSeries->count() > 0) qDebug() << index << " " << mainSeries->barSets()[0]->at(index);}
 
 public slots:
     void selectROIRegion(int regionStartPoint, int regionEndPoint);
@@ -63,6 +70,8 @@ private:
     QValueAxis *axisY;
     QLogValueAxis *logAxisY;
 
+    // TODO : LevelSeriesData를 직접받아 관리할 필요성이 존재해보임
+
     std::vector<int> maxLevelData;
 
     int seriesCounter = 0;
@@ -74,6 +83,21 @@ private:
     int endSample = DEFAULT_CHANNEL_SIZE;
     int maxMagnitude = 1;
     int threshold = 0;
+};
+
+
+class SpectrumChartView : public QChartView {
+    Q_OBJECT
+
+public:
+    SpectrumChartView(SpectrumChart *chart);
+
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+
+private:
+    SpectrumChart *mainChart;
+    QGraphicsLineItem *guideLineItem;
 };
 
 class ROITabWidget : public QWidget {

@@ -91,8 +91,6 @@ void SpectrumListManager::setSpectrumListComboBoxUI() {
         for (int i = 0; i< this->datas.size(); i++){
             this->spectrumListComboBox->addItem("Spectrum " + QString::number(i));
         }
-        qDebug() << "Before";
         this->previewChart->setChartWithLevelSeries(this->datas[0]);
-        qDebug() << "After";
     }
 }
