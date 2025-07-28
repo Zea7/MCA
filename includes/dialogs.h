@@ -128,7 +128,7 @@ private:
 
 signals:
     void sendROIRegions(std::vector<std::pair<int, int>> roiRegions);
-    void sendShowRegion(int start, int end);
+    void sendShowRegion(int index);
 
 private slots:
     void addRegion();
@@ -152,6 +152,7 @@ private:
     void setOKCancelLayoutUI();
     void setSerialSettingLayoutUI();
     void setExperimentalSettingLayoutUI();
+    void setTooltipUI();
 
     QGridLayout *mainLayout;
 
@@ -160,6 +161,8 @@ private:
     QComboBox *serialPortSettingComboBox;
     QLineEdit *baudRateInput;
     QLineEdit *realTimeInput;
+    QLineEdit *thresholdInput;
+    QLineEdit *countInput;
     QPushButton *backgroundSubstractFileSelectButton;
     QPushButton *OKButton;
     QPushButton *cancelButton;
@@ -172,6 +175,8 @@ private:
     std::vector<std::string> enablePorts;
     int baudRate;
     int realTime = 0;
+    int counter = 0;
+    int threshold;
     int channelSize;
     QString backgroundSubstractFilePath = "";
 
@@ -186,5 +191,6 @@ private slots:
     void okSignal();
     void chooseBackgroundSubstractFile();
 };
+
 
 #endif

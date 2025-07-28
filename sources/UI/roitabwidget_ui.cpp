@@ -2,6 +2,8 @@
 
 ROITabWidget::ROITabWidget() {
     setWidgetUI();
+
+    setSignalSlotConnection();
 }
 
 void ROITabWidget::setWidgetUI() {
@@ -10,7 +12,7 @@ void ROITabWidget::setWidgetUI() {
     this->pointsNumberComboBox = new QComboBox();
     this->informationFrame = new QFrame();
 
-    this->changeRegionsListButton = new QPushButton();
+    this->changeRegionsListButton = new QPushButton("Edit ROI");
     this->roiRegionControlLayout = new QHBoxLayout();
 
     this->changeRegionColorButton = new QPushButton();
@@ -21,6 +23,10 @@ void ROITabWidget::setWidgetUI() {
     QLabel *pointsNumberComboBoxLabel = new QLabel("Set the number of points to use calculate the Gaussian distribution");
     QLabel *setColorLabel = new QLabel("ROI Region Color");
     QLabel *informationLabel = new QLabel("Information of chosen ROI Region");
+
+    this->roiRegionControlLayout->addWidget(roiRegionListLabel);
+    this->roiRegionControlLayout->addStretch(1);
+    this->roiRegionControlLayout->addWidget(this->changeRegionsListButton);
 
     this->mainLayout->addLayout(this->roiRegionControlLayout);
     this->mainLayout->addWidget(this->roiListComboBox);

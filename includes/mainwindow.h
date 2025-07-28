@@ -43,11 +43,13 @@
 
 #include <QFile>
 #include <QFileDialog>
+#include <QThread>
 
 #include "widgets.h"
 #include "types.h"
 #include "dialogs.h"
 #include "utils.h"
+#include "threads.h"
 
 
 class MainWindow : public QMainWindow {
@@ -73,14 +75,7 @@ private:
     void setSidePannelUI();
     void setBottomControlPannelUI();
 
-    void setMenuAndToolBar();
-
-    void setSignalSlotConnection();
-
-    // void setInfoTab(QStringList list);
-    // // std::pair<double, double> getLinearFuncFromData(std::vector<std::pair<int, int>> points);
-    // // std::pair<double, double> getGaussianDistributionFromData(std::vector<double> dataset);
-    // double getAreaSizeFromData(std::vector<double> dataset);
+    void setMenuAndToolBarUI();
 
     QWidget *mainWidget;
     QGridLayout *mainLayout;
@@ -93,7 +88,7 @@ private:
 
     QCheckBox *setLogScaleCheckBox;
 
-    QWidget *basicInformationTab;
+    InfoTabWidget *basicInformationTab;
     ROITabWidget *regionInformationTab;
 
     SpectrumChart *mainChart;
@@ -106,22 +101,12 @@ private:
     int maxMagnitude = 1;
     int threshold = 0;
 
-    int mainMCADataIndex = 0; // 저장되는 등 주로 활용될 MCA DATA Index
+    int mainMCADataIndex = -1; // 저장되는 등 주로 활용될 MCA DATA Index
 
     /* 
         for test
     */
     int openTime = 0;
-
-
-    // FileMenu *fileMenu;
-    // ViewMenu *viewMenu;
-    // AcquisitionMenu *acquisitionMenu;
-    // DisplayMenu *displayMenu;
-    // AnalyzeMenu *analyzeMenu;
-    // HelpMenu *helpMenu;
-
-    // ToolBar *toolbar;
 
     // MCA Data vector
     std::vector<std::shared_ptr<LevelSeriesData>> mainMCAData;
@@ -132,13 +117,10 @@ private:
 
     // ROI
     std::vector<std::pair<int, int>> roiRegions;
+    int showingROIRegionIndex;
 
-    // Peaks
-    // std::vector<PeakInfo> peaks;
-
-    // UartCommunicator *uart;
-
-    // DetectThread *detectThread;
+    SerialWorker *serialWorker;
+    QThread *mainWorker;
 
 // private slot for menu & tool bar
 private:
@@ -183,50 +165,58 @@ private:
 // private sections for main functions
 private:
     void dialogTest();
+    void setUISignalSlotConnection();
+    void setSerialWorkerSignalSlotConnection();
 
 signals:
+    /**
+     * @brief 이건 뭘까요
+     * 
+     */
     void mcaDataListChanged(std::vector<bool> indexes);
-    // void setSampleRange(int start, int end);
-    // void setMaxMagnitude(int magnitude);
-    // void resizeXAxis();
-    // void resizeYAxis();
 
-    // void setROIRegion(std::vector<std::pair<int, int>> roiRegions);
-    // void selectedROIRegionToShow(std::vector<std::pair<int, int>> roiRegions);
-
+    void chartChanged();
     void sendGaussianDistributionData(std::vector<std::pair<double, double>> data);
 
+    void roiRegionChanged(std::vector<std::pair<int, int>> roiRegions);
+
 private slots:
+
+    /**
+     * @brief OOasd
+     * 
+     */
     void openMCAFile();
+
+    /**
+     * @brief 설명입니다
+     * 
+     * @param Asd:str adf 
+     */
     void saveAsMCAFile();
-    // void autoResizeXAxis();
-    // void autoResizeYAxis();
-    
-    // // ROI
-    // void openROIDialog();
-    // void getROIRegions(std::vector<std::pair<int, int>> roiRegions);
 
-    // void showSpecificRegion();
-    // void sendSpecificRegion(int start, int end);
+    void showROIRegionManager();
 
-    // // SpectoChart
-    // void ShowHoveredData(bool status, int index, int value);
-
-    // // Auto peak search
-    // void openAutoPeakDialog();
-    // void doAutoPeakSearch(int start, int end, int left, int right);
+    // SpectoChart
+    void showClickedData(int xIndex);
 
     // ROI Tab Widget
     void calculateGaussianDistributionWithArguments(int roiRegionIndex, int pointIndex);
 
     void getSerialSetter(SerialSetter setter);
 
-    // void startDetection();
-    // void stopDetection();
-    
-    // Dialogs
+    /* 
+    dialogs
+     */
     void showSpectrumListManager();
-    // void setMainChartData(std::vector<int> data);
+
+    void getSerialData(const std::vector<int>& rawData);
+
+    void startDetection();
+    void stopDetection();
+
+    void getROIRegions(std::vector<std::pair<int, int>> roiRegions);
+    void setShowingROIRegion(int index);
 };
 
 #endif

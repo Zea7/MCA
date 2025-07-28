@@ -83,3 +83,4 @@ build/
 *.ninja
 .ninja*
 *.csv
+!app_icon.rc

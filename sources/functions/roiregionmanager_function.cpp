@@ -67,10 +67,10 @@ void ROIRegionManager::replaceRegion() {
 
 void ROIRegionManager::selectRegion(){
     QModelIndexList indexes = this->showROIListTable->selectionModel()->selectedRows();
-    if(indexes.count() > 1) return; //TODO
-    std::pair<int, int> region = roiRegions[indexes.at(0).row()];
+    if(indexes.count() != 1) return; //TODO
 
-    emit sendShowRegion(region.first, region.second);
+    emit sendROIRegions(roiRegions);
+    emit sendShowRegion(indexes.at(0).row());
 }
 
 void ROIRegionManager::okSignal() {

@@ -24,7 +24,11 @@ private:
     bool running = true;
     int data[DATA_MAX_SIZE] = {0};
     UartCommunicator *uart;
+<<<<<<< Updated upstream:old_files/qth.h
     QStringList responseList;
+=======
+    int spectrumCounter = 8000;
+>>>>>>> Stashed changes:qth.h
 
 signals:
     void setData(std::vector<int> data);

@@ -98,6 +98,9 @@ protected:
 private:
     SpectrumChart *mainChart;
     QGraphicsLineItem *guideLineItem;
+
+signals:
+    void sendClickedXCoordinate(int xIndex);
 };
 
 class ROITabWidget : public QWidget {
@@ -138,6 +141,7 @@ private:
     QString estimatedAreaSizeString = QStringLiteral("Calculated Area Size : ");
 
     std::vector<std::pair<int, int>> roiRegions;
+    int selectedROIRegionIndex;
 
 
 signals:
@@ -157,6 +161,36 @@ public slots:
 
 private slots:
     void calculateGaussianDistributionWithSelectedROIRegion(int index);
+};
+
+class InfoTabWidget : public QWidget {
+    Q_OBJECT
+
+public:
+    InfoTabWidget();
+
+private:
+    void setWidgetUI();
+    void setBasicInformationFrame();
+
+    QVBoxLayout *mainLayout;
+    QFrame *basicInformationFrame;
+    QGridLayout *basicInformationFrameLayout;
+    QComboBox *channelSizeSelectComboBox;
+
+    QLabel *seriesName;
+    QLabel *liveTimeLabel;
+    QLabel *realTimeLabel;
+    QLabel *deadTimeLabel;
+    QLabel *totalCountLabel;
+
+    QStringList channelComboList;
+
+signals:
+    void setChannelSize(int channelSize);
+
+public slots:
+    void getLevelSeriesData(std::shared_ptr<LevelSeriesData> data);
 };
 
 #endif

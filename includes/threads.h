@@ -5,6 +5,7 @@
 #include <QString>
 #include <QStringList>
 #include <vector>
+#include <algorithm>
 #include "types.h"
 class SerialWorker : public QObject {
     Q_OBJECT
@@ -22,16 +23,19 @@ public slots:
     void stop();
 
 signals:
-    void receivedData(const QByteArray& data);
+    void sendData(const std::vector<int>& data);
 
 private slots:
-    void readSerial();
 
 private:
     SerialStream *serial;
     bool running = false;
 
+    std::vector<int> readSerial();
+    int rawData[DATA_MAX_SIZE] = {0};
+
     std::string portName;
+    int countPerCycle = 1000;
 };
 
 #endif

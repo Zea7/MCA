@@ -9,6 +9,7 @@ ROIRegionManager::~ROIRegionManager() {
 }
 
 ROIRegionManager::ROIRegionManager(std::vector<std::pair<int, int>> roiRegions){
+    this->roiRegions = roiRegions;
     setUI();
 }
 

@@ -8,7 +8,6 @@ SpectrumListManager::SpectrumListManager() {
 SpectrumListManager::SpectrumListManager(std::vector<std::shared_ptr<LevelSeriesData>>& datas) : datas(datas){
     qDebug() << "1";
     qDebug() << "Size : " << this->datas.size();
-    qDebug() << this->datas[0]->getChannelSize();
     setUI();
     setSignalSlotConnection();
 }

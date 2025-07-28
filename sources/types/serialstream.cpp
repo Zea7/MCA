@@ -55,7 +55,6 @@ std::string SerialStream::receiveResponse() {
     char buffer[256];
     DWORD bytesRead;
     std::string response;
-    bool go = false;
 
     do {
         if (!ReadFile(hSerial, buffer, sizeof(buffer), &bytesRead, NULL)){
@@ -89,8 +88,8 @@ void SerialStream::setupSerialParams(){
     }
 
     timeouts = { 0 };
-    timeouts.ReadIntervalTimeout = 50;
-    timeouts.ReadTotalTimeoutConstant = 50;
+    timeouts.ReadIntervalTimeout = 5;
+    timeouts.ReadTotalTimeoutConstant = 10;
     timeouts.ReadTotalTimeoutMultiplier = DEFAULT_BUFFER_READ_TIME_MULTIPLIER;
     timeouts.WriteTotalTimeoutConstant = 50;
     timeouts.WriteTotalTimeoutMultiplier = 10;
@@ -136,6 +135,7 @@ std::vector<int> SerialStream::parseDWORDData(const std::vector<uint8_t> &buffer
 }
 
 bool SerialStream::isMCADevice() {
+    // Response를 확인하여 연결 무결성 확인
     try{
         if(sendCommand("ID")){
             QString response = QString::fromUtf8(receiveResponse());
@@ -158,8 +158,8 @@ bool SerialStream::isMCADevice() {
                 }
 
                 if(sendCommand("Status")){
-                    QString response = QString::fromUtf8(receiveResponse());
-
+                    // QString response = QString::fromUtf8(receiveResponse());
+                    std::string response = receiveResponse();
                     qDebug() << response;
                 }
             }

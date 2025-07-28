@@ -25,14 +25,20 @@ void SerialManager::okSignal() {
     qDebug() << this->portName;
     
     this->baudRate = this->baudRateInput->text().toInt();
+
+    this->threshold = this->thresholdInput->text().toInt();
     
     if(this->realTimeInput->text() != ""){
         this->realTime = this->realTimeInput->text().toInt();
     }
 
+    if(this->countInput->text() != ""){
+        this->counter = this->countInput->text().toInt();
+    }
+
     this->channelSize = this->channelSizeSettingComboBox->currentText().toInt();
 
-    SerialSetter setter = {this->portName, this->baudRate, this->realTime, this->channelSize, this->backgroundSubstractFilePath};
+    SerialSetter setter = {this->portName, this->baudRate, this->realTime, this->counter, this->channelSize, this->threshold, this->backgroundSubstractFilePath};
 
     emit sendSerialSetter(setter);
 }

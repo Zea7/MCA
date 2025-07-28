@@ -33,7 +33,7 @@ LevelSeriesData::LevelSeriesData(int channelSize, std::vector<int> rawDataSeries
 
     this->rawDataSeries = data;
 
-    this->setLevelSeries();
+    this->setLevelSeriesFromRawSeries();
 }
 
 LevelSeriesData::LevelSeriesData(std::vector<int> rawDataSeries, double liveTime, double realTime, double deadTime, QDateTime startTime) :
@@ -47,7 +47,7 @@ LevelSeriesData::LevelSeriesData(std::vector<int> rawDataSeries, double liveTime
     }
 
     this->rawDataSeries = data;
-    this->setLevelSeries();
+    this->setLevelSeriesFromRawSeries();
 }
 
 LevelSeriesData::LevelSeriesData(std::vector<int> rawDataSeries, double liveTime, double realTime, QDateTime startTime) :
@@ -62,7 +62,7 @@ LevelSeriesData::LevelSeriesData(std::vector<int> rawDataSeries, double liveTime
     }
 
     this->rawDataSeries = data;
-    this->setLevelSeries();
+    this->setLevelSeriesFromRawSeries();
 }
 LevelSeriesData::~LevelSeriesData() {
     // delete &rawDataSeries;
@@ -82,7 +82,7 @@ void LevelSeriesData::setRawDataSeriesWithLevelSeries(std::vector<int> rawDataSe
     private functions
 */
 
-void LevelSeriesData::setLevelSeries(){
+void LevelSeriesData::setLevelSeriesFromRawSeries(){
     assert(checkSizePolicy(this->channelSize) && checkSizePolicy(this->rawChannelSize));
 
     int channelSizeRate = rawChannelSize / channelSize;

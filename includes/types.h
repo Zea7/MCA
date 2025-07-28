@@ -9,7 +9,7 @@
 #define DEFAULT_BUFFER_READ_TIME_MULTIPLIER 1
 
 #define CDC_PACKET_SIZE 2
-#define CDC_PACKET_HEADER "RISI"
+
 
 #define DEFAULT_TRIGGER_VALUE 33300
 
@@ -28,18 +28,22 @@
 #include <cstring>
 #include <sstream>
 
+const static std::string CDC_PACKET_HEADER = "RISI";
+
 struct SerialSetter {
     std::string portName;
     int baudRate;
     int realTime;
+    int counter;
     int channelSize;
+    int threshold;
     QString backgroundSubstractFilePath;
 };
 
 class LevelSeriesData {
 /* 
     MCA 프로그램의 기본적인 데이터를 다루는 클래스.
-    각 채녈 별 레벨 데이터를 시리즈로 저장하여 다루며, 
+    각 채널 별 레벨 데이터를 시리즈로 저장하여 다루며, 
     데이터 관련 기능들을 갖추는 클래스
 
     모든 데이터의 입력은 raw data로 받으며,
@@ -78,6 +82,7 @@ public:
         std::vector<int> getLevelSeries()       : 
     */
     void setChannelSize(int channelSize) {this->channelSize = channelSize;}
+    void setName(QString name) {this->seriesName = name;}
     int getChannelSize() {return this->channelSize;}
     int getRawChannelSize() {return this->rawChannelSize;}
     std::vector<int>& getLevelSeries() {return this->levelSeries;}
@@ -96,9 +101,14 @@ public:
         this->liveTime = data->getLiveTime();
         this->realTime = data->getRealTime();
         this->deadTime = data->getDeadTime();
+        this->seriesName = data->getName();
+    }
+    QString getName() {
+        return this->seriesName;
     }
 
     QStringList getHeaderData();
+    void setRawDataSeries(std::vector<int> rawDataSeries) {this->rawDataSeries = rawDataSeries; this->setLevelSeriesFromRawSeries();}
 
 private:
     int channelSize = DATA_MIN_SIZE;
@@ -108,7 +118,7 @@ private:
 
     std::vector<std::pair<int, int>> roiRegions;
 
-    void setLevelSeries();
+    void setLevelSeriesFromRawSeries();
     bool checkSizePolicy(int size);
     int getSizeFromPolicy(int size);
 
@@ -116,6 +126,8 @@ private:
     double realTime = 0;
     double deadTime = 0;
     QDateTime startTime;
+
+    QString seriesName = "";
 };
 
 class MCAFileStream {
@@ -140,6 +152,7 @@ private:
     double realTime = 0;
     double deadTime;
     QDateTime startTime;
+    QString fileName;
 };
 
 class SerialStream {
@@ -175,12 +188,12 @@ public:
 
     std::string receiveResponse();
     LevelSeriesData* parseReceivedResponseIntoLevelSeriesData();
-
+    std::vector<int> parseDWORDData(const std::vector<uint8_t> &buffer);
+    
 private:
     void setupSerialParams();
     bool sendConstructedCommand(const std::string &command);
     bool isMCADevice();
-    std::vector<int> parseDWORDData(const std::vector<uint8_t> &buffer);
 };
 
 #pragma comment (lib, "Setupapi.lib")

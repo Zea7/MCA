@@ -5,7 +5,7 @@ MainWindow::MainWindow(){
     setMainUI();
 
     dialogTest();
-    setSignalSlotConnection();
+    setUISignalSlotConnection();
 }
 
 void MainWindow::setMainUI(){
@@ -35,9 +35,10 @@ void MainWindow::setMainUI(){
 
     this->mainWidget->setLayout(this->mainLayout);
     setCentralWidget(this->mainWidget);
+    this->setWindowIcon(QIcon(":/icons/appico.ico"));
 
     // Set MenuBar & ToolBar
-    setMenuAndToolBar();
+    setMenuAndToolBarUI();
 }
 
 void MainWindow::setMainChartUI() {
@@ -46,7 +47,7 @@ void MainWindow::setMainChartUI() {
 }
 
 void MainWindow::setSidePannelUI() {
-    this->basicInformationTab = new QWidget();
+    this->basicInformationTab = new InfoTabWidget();
     this->regionInformationTab = new ROITabWidget();
 
     this->sidePannel->addTab(this->basicInformationTab, "Info");
@@ -71,7 +72,7 @@ void MainWindow::setBottomControlPannelUI() {
     this->bottomControlPannel->addWidget(this->setLogScaleCheckBox, 0, 2, 1, 1);
 }
 
-void MainWindow::setMenuAndToolBar() {
+void MainWindow::setMenuAndToolBarUI() {
     // File Menu Setup
     this->fileMenu = new QMenu("File");
     this->file_open = new QAction("&Open");

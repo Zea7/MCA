@@ -5,6 +5,9 @@ MCAFileStream::MCAFileStream(QString fileName) {
     qDebug() << fileName;
     QFile dataFile(fileName);
 
+    QStringList nameList = fileName.split("/");
+    this->fileName = nameList[nameList.size() - 1];
+
     if(!dataFile.open(QFile::ReadOnly | QFile::Text)){
         if(!dataFile.exists()){
             qDebug() << "File Open Error!\n File Does Not Exists.";
@@ -90,6 +93,7 @@ void MCAFileStream::parseData(QString parser) {
     if (liveTime && realTime) this->deadTime = realTime - liveTime;
     
     this->seriesData = std::make_shared<LevelSeriesData>(this->data, this->liveTime, this->realTime, this->startTime);
+    this->seriesData->setName(this->fileName);
 
     qDebug() << deadTime;
     qDebug() << this->startTime;
