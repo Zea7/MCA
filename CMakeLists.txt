@@ -16,6 +16,9 @@ set(PROJECT_SOURCES
         main.cpp
 )
 
+set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/app_icon.rc")
+
+
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(MCA
         MANUAL_FINALIZATION
@@ -26,16 +29,21 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         includes/utils.h
         includes/widgets.h
         includes/types.h
+        includes/strings.h
+        includes/styles.h
 
         sources/functions/mainwindow_function.cpp
         sources/functions/spectrumchart_function.cpp
         sources/functions/roitabwidget_function.cpp
+        sources/functions/infotabwidget_function.cpp
         sources/functions/spectrumlistmanager_function.cpp
         sources/functions/roiregionmanager_function.cpp
         sources/functions/serialmanager_function.cpp
+        sources/functions/spectrumchartview_function.cpp
         sources/UI/mainwindow_ui.cpp
         sources/UI/spectrumchart_ui.cpp
         sources/UI/roitabwidget_ui.cpp
+        sources/UI/infotabwidget_ui.cpp
         sources/UI/roiregionmanager_ui.cpp
         sources/UI/serialmanager_ui.cpp
         sources/types/levelseriesdata.cpp
@@ -48,6 +56,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         sources/utils.cpp
 
         icons.qrc
+        ${app_icon_resource_windows}
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET MCA APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
